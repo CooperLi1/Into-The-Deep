@@ -16,8 +16,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.blucru.common.util.*;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Robot;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.localization.FusedLocalizer;
+import org.firstinspires.ftc.teamcode.blucru.common.util.*;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
 //import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.localization.FusedLocalizer;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
@@ -71,7 +72,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
 //    public DrivetrainTranslationPID translationPID;
     public Pose2d targetPose;
-//    public FusedLocalizer fusedLocalizer;
+    public FusedLocalizer fusedLocalizer;
 
     PIDController headingPID;
     double targetHeading = 0;
@@ -92,7 +93,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         headingPID.setTolerance(HEADING_PID_TOLERANCE);
 
 //        translationPID = new DrivetrainTranslationPID(TRANSLATION_P, TRANSLATION_I, TRANSLATION_D, TRANSLATION_PID_TOLERANCE);
-//        fusedLocalizer = new FusedLocalizer(getLocalizer(), hardwareMap);
+        fusedLocalizer = new FusedLocalizer(getLocalizer(), hardwareMap);
         pose = new Pose2d(0,0,0);
         lastPose = Globals.startPose;
         lastDriveVector = new Vector2d(0,0);
@@ -120,14 +121,14 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         this.drivetrainState = State.TELEOP;
 
         pose = this.getPoseEstimate();
-//        fusedLocalizer.init();
+        fusedLocalizer.init();
     }
 
     public void read() {
         dt = System.currentTimeMillis() - lastTime;
         lastTime = System.currentTimeMillis();
 
-//        fusedLocalizer.update();
+        fusedLocalizer.update();
 
         lastPose = pose;
         pose = this.getPoseEstimate();
@@ -447,7 +448,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     // resets heading
     public void resetHeading(double heading) {
-//        fusedLocalizer.resetHeading(heading);
+        fusedLocalizer.resetHeading(heading);
         Log.i("Drivetrain", "Reset heading to " + heading);
     }
 
@@ -492,7 +493,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     public void updateAprilTags(AprilTagProcessor processor) {
         try {
-//            fusedLocalizer.updateAprilTags(processor);
+            fusedLocalizer.updateAprilTags(processor);
         } catch (Exception e) {
             return;
         }
