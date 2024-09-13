@@ -28,6 +28,10 @@ public class BluServo extends ServoImpl implements BluHardwareDevice {
         pos = Range.clip(position, 0, 1);
     }
 
+    public double getPosition() {
+        return pos;
+    }
+
     public void init() {
     }
 
