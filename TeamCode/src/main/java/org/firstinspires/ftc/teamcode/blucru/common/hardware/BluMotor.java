@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.blucru.common.states.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 public class BluMotor extends DcMotorImpl implements BluHardwareDevice {
     public static double RING_BUFFER_MILLIS = 30;

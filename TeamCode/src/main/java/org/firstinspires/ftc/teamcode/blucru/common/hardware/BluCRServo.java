@@ -4,7 +4,8 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.CRServoImpl;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.blucru.common.states.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+
 
 // all the hardware wrapper classes need testing
 public class BluCRServo extends CRServoImpl implements BluHardwareDevice{

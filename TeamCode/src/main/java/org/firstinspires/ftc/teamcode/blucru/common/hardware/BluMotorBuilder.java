@@ -4,7 +4,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 
-import org.firstinspires.ftc.teamcode.blucru.common.states.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+
 
 public class BluMotorBuilder {
     String name;

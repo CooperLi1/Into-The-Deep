@@ -4,7 +4,8 @@ import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.hardware.ServoImpl;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.blucru.common.states.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+
 
 // prob no need for builder
 public class BluServo extends ServoImpl implements BluHardwareDevice {
