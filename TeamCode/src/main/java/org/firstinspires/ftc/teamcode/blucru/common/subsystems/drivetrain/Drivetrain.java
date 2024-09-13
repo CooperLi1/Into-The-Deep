@@ -16,14 +16,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.blucru.common.states.DrivetrainState;
-import org.firstinspires.ftc.teamcode.blucru.common.states.Globals;
-import org.firstinspires.ftc.teamcode.blucru.common.states.RobotState;
+import org.firstinspires.ftc.teamcode.blucru.common.util.*;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
-import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.localization.FusedLocalizer;
-import org.firstinspires.ftc.teamcode.blucru.common.util.DrivetrainTranslationPID;
-import org.firstinspires.ftc.teamcode.blucru.common.util.Subsystem;
+//import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.localization.FusedLocalizer;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.util.DashboardUtil;
@@ -54,7 +50,13 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
             TRAJECTORY_FOLLOWER_ERROR_TOLERANCE = 12.0; // inches to shut down auto
 
-    public DrivetrainState drivetrainState;
+    enum State {
+        TELEOP,
+        DRIVE_TO_POSITION,
+        FOLLOWING_TRAJECTORY
+    }
+
+    public State drivetrainState;
     boolean isTeleOp;
     boolean intakingInAuto;
     public double drivePower = 0.5;
@@ -67,9 +69,9 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     public Pose2d accel;
     double lastTime;
 
-    public DrivetrainTranslationPID translationPID;
+//    public DrivetrainTranslationPID translationPID;
     public Pose2d targetPose;
-    public FusedLocalizer fusedLocalizer;
+//    public FusedLocalizer fusedLocalizer;
 
     PIDController headingPID;
     double targetHeading = 0;
@@ -83,14 +85,14 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     public Drivetrain(HardwareMap hardwareMap, boolean isTeleOp) {
         super(hardwareMap);
-        this.drivetrainState = DrivetrainState.TELEOP;
+        this.drivetrainState = State.TELEOP;
         this.isTeleOp = isTeleOp;
         this.intakingInAuto = false;
         headingPID = new PIDController(HEADING_P, HEADING_I, HEADING_D);
         headingPID.setTolerance(HEADING_PID_TOLERANCE);
 
-        translationPID = new DrivetrainTranslationPID(TRANSLATION_P, TRANSLATION_I, TRANSLATION_D, TRANSLATION_PID_TOLERANCE);
-        fusedLocalizer = new FusedLocalizer(getLocalizer(), hardwareMap);
+//        translationPID = new DrivetrainTranslationPID(TRANSLATION_P, TRANSLATION_I, TRANSLATION_D, TRANSLATION_PID_TOLERANCE);
+//        fusedLocalizer = new FusedLocalizer(getLocalizer(), hardwareMap);
         pose = new Pose2d(0,0,0);
         lastPose = Globals.startPose;
         lastDriveVector = new Vector2d(0,0);
@@ -106,7 +108,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         fieldCentric = true;
         targetPose = pose;
         lastRotateInput = 0;
-        drivetrainState = DrivetrainState.TELEOP;
+        drivetrainState = State.TELEOP;
     }
 
     public void init() {
@@ -115,17 +117,17 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
         initializePose();
 
-        this.drivetrainState = DrivetrainState.TELEOP;
+        this.drivetrainState = State.TELEOP;
 
         pose = this.getPoseEstimate();
-        fusedLocalizer.init();
+//        fusedLocalizer.init();
     }
 
     public void read() {
         dt = System.currentTimeMillis() - lastTime;
         lastTime = System.currentTimeMillis();
 
-        fusedLocalizer.update();
+//        fusedLocalizer.update();
 
         lastPose = pose;
         pose = this.getPoseEstimate();
@@ -165,7 +167,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         else // drive, turning to target heading
             driveToHeadingScaled(x, y, targetHeading);
 
-        drivetrainState = DrivetrainState.TELEOP;
+        drivetrainState = State.TELEOP;
 
         // recording last turn input
         lastRotateInput = rotate;
@@ -318,10 +320,10 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     }
 
     public void driveToPosition(Pose2d targetPosition) {
-        translationPID.setTargetPosition(targetPosition.vec());
-        Vector2d rawDriveVector = translationPID.calculate(pose.vec());
+//        translationPID.setTargetPosition(targetPosition.vec());
+//        Vector2d rawDriveVector = translationPID.calculate(pose.vec());
 
-        driveToHeadingClip(rawDriveVector.getX(), rawDriveVector.getY(), targetPosition.getHeading());
+//        driveToHeadingClip(rawDriveVector.getX(), rawDriveVector.getY(), targetPosition.getHeading());
     }
 
     // set the component of a vector in a direction
@@ -355,13 +357,13 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     }
 
     public void idle() {
-        drivetrainState = DrivetrainState.TELEOP;
+        drivetrainState = State.TELEOP;
         lastDriveVector = new Vector2d(0,0);
     }
 
     public void pidTo(Pose2d pose) {
         fieldCentric = true;
-        drivetrainState = DrivetrainState.DRIVE_TO_POSITION;
+        drivetrainState = State.DRIVE_TO_POSITION;
         pose = new Pose2d(pose.getX(), pose.getY(), Angle.norm(pose.getHeading()));
         setTargetPose(pose);
     }
@@ -422,30 +424,30 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 //        return heading;
 //    }
 
-    public void setTeleDrivePower(RobotState robotState, Gamepad gamepad) {
-        boolean slow = gamepad.left_trigger > 0.1,
-                fast = gamepad.right_trigger > 0.1;
-
-        double slowPower, fastPower, normalPower;
-        switch (robotState) {
-            case RETRACT: slowPower = 0.4; fastPower = 1.0; normalPower = 0.9; break;
-            case INTAKING: slowPower = 0.3; fastPower = 1.0; normalPower = 0.85; break;
-            case LIFTING: slowPower = 0.3; fastPower = 0.7; normalPower = 0.6; break;
-            case OUTTAKING: slowPower = 0.25; fastPower = 0.8; normalPower = 0.5; break;
-            case OUTTAKE_WRIST_RETRACTED: slowPower = 0.3; fastPower = 0.7; normalPower = 0.7; break;
-            case RETRACTING: slowPower = 0.3; fastPower = 0.8; normalPower = 0.75; break;
-            default: slowPower = 0.3; fastPower = 0.8; normalPower = 0.5; break;
-        }
-
-        if(slow && fast) setDrivePower(normalPower);
-        else if(slow) setDrivePower(slowPower);
-        else if(fast) setDrivePower(fastPower);
-        else setDrivePower(normalPower);
-    }
+//    public void setTeleDrivePower(RobotState robotState, Gamepad gamepad) {
+//        boolean slow = gamepad.left_trigger > 0.1,
+//                fast = gamepad.right_trigger > 0.1;
+//
+//        double slowPower, fastPower, normalPower;
+//        switch (robotState) {
+//            case RETRACT: slowPower = 0.4; fastPower = 1.0; normalPower = 0.9; break;
+//            case INTAKING: slowPower = 0.3; fastPower = 1.0; normalPower = 0.85; break;
+//            case LIFTING: slowPower = 0.3; fastPower = 0.7; normalPower = 0.6; break;
+//            case OUTTAKING: slowPower = 0.25; fastPower = 0.8; normalPower = 0.5; break;
+//            case OUTTAKE_WRIST_RETRACTED: slowPower = 0.3; fastPower = 0.7; normalPower = 0.7; break;
+//            case RETRACTING: slowPower = 0.3; fastPower = 0.8; normalPower = 0.75; break;
+//            default: slowPower = 0.3; fastPower = 0.8; normalPower = 0.5; break;
+//        }
+//
+//        if(slow && fast) setDrivePower(normalPower);
+//        else if(slow) setDrivePower(slowPower);
+//        else if(fast) setDrivePower(fastPower);
+//        else setDrivePower(normalPower);
+//    }
 
     // resets heading
     public void resetHeading(double heading) {
-        fusedLocalizer.resetHeading(heading);
+//        fusedLocalizer.resetHeading(heading);
         Log.i("Drivetrain", "Reset heading to " + heading);
     }
 
@@ -490,7 +492,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     public void updateAprilTags(AprilTagProcessor processor) {
         try {
-            fusedLocalizer.updateAprilTags(processor);
+//            fusedLocalizer.updateAprilTags(processor);
         } catch (Exception e) {
             return;
         }
@@ -498,7 +500,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     public void updateAprilTags() {
         try {
-            fusedLocalizer.updateAprilTags(Robot.getInstance().cvMaster.tagDetector);
+//            fusedLocalizer.updateAprilTags(Robot.getInstance().cvMaster.tagDetector);
         } catch (Exception e) {
             return;
         }
