@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.hardware;
+package org.firstinspires.ftc.teamcode.blucru.opmode.hardware;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -22,9 +22,7 @@ public class ServoTest extends LinearOpMode {
         updateDirection();
         updateController();
         disable();
-
         waitForStart();
-
         while(opModeIsActive()) {
             updateName();
             updateDirection();
@@ -56,7 +54,7 @@ public class ServoTest extends LinearOpMode {
         try {
             if(reversed) test.setDirection(Servo.Direction.REVERSE);
             else test.setDirection(Servo.Direction.FORWARD);
-        } catch (Exception ignored) {}
+        } catch (Exception e) {}
     }
 
     public void updateController() {

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.hardware;
+package org.firstinspires.ftc.teamcode.blucru.opmode.hardware;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -21,7 +21,6 @@ public class MotorTest extends LinearOpMode {
         reset();
 
         waitForStart();
-
         while(opModeIsActive()) {
             updateName();
             updateDirection();
@@ -41,10 +40,8 @@ public class MotorTest extends LinearOpMode {
     }
 
     public void updateDirection() {
-        try{
-            if(reversed) test.setDirection(DcMotorSimple.Direction.REVERSE);
-            else test.setDirection(DcMotorSimple.Direction.FORWARD);
-        } catch (Exception ignored) {}
+        if(reversed) test.setDirection(DcMotorSimple.Direction.REVERSE);
+        else test.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public void updateName() {
