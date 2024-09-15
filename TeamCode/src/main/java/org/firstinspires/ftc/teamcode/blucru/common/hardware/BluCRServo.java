@@ -42,6 +42,7 @@ public class BluCRServo extends CRServoImpl implements BluHardwareDevice{
 
     @Override
     public void write() {
+        // only update if power has changed
         if(Math.abs(power - lastPower) > 0.003) {
             super.setPower(power);
         }
