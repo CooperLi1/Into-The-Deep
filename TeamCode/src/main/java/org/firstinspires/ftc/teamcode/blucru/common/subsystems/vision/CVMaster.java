@@ -33,15 +33,12 @@ public class CVMaster implements Subsystem {
     GainControl gainControl;
     FocusControl focusControl;
 
-    public Alliance alliance;
     public VisionPortal visionPortal;
     public AprilTagProcessor tagDetector;
 
     public int numDetections;
 
-    public CVMaster(HardwareMap hardwareMap, Alliance alliance) {
-        this.alliance = alliance;
-
+    public CVMaster(HardwareMap hardwareMap) {
         this.tagDetector = new AprilTagProcessor.Builder()
                 .setDrawAxes(false)
                 .setDrawCubeProjection(false)
