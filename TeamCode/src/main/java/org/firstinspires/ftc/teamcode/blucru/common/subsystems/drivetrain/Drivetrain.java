@@ -59,7 +59,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     public State drivetrainState;
     boolean isTeleOp;
-    boolean intakingInAuto;
     public double drivePower = 0.5;
     double dt;
     public Pose2d pose;
@@ -88,7 +87,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         super(hardwareMap);
         this.drivetrainState = State.TELEOP;
         this.isTeleOp = isTeleOp;
-        this.intakingInAuto = false;
         headingPID = new PIDController(HEADING_P, HEADING_I, HEADING_D);
         headingPID.setTolerance(HEADING_PID_TOLERANCE);
 

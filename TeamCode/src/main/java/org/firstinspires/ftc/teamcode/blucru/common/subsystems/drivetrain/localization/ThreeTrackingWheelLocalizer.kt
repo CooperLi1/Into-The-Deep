@@ -9,6 +9,9 @@ import org.apache.commons.math3.linear.LUDecomposition
 import org.apache.commons.math3.linear.MatrixUtils
 
 /**
+ * Pasted from roadrunner 0.5, with the following changes:
+ * - removed clearing lastWheelPositions in setPoseEstimate
+ *
  * Localizer based on three unpowered tracking omni wheels.
  *
  * @param wheelPoses wheel poses relative to the center of the robot (positive X points forward on the robot)
