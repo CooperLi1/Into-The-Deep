@@ -7,21 +7,28 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 
-// prob no need for builder
 public class BluServo extends ServoImpl implements BluHardwareDevice {
     String name;
     ServoController controller;
     double pos=0, lastPos=0;
 
-    public BluServo(String name, Direction direction) {
-        super(Globals.hwMap.get(ServoImpl.class, name).getController(),
-                Globals.hwMap.get(ServoImpl.class, name).getPortNumber(), direction);
+    private BluServo(ServoImpl servo, String name, Direction direction) {
+        super(servo.getController(), servo.getPortNumber(), servo.getDirection());
+        this.setDirection(direction);
+        this.controller = servo.getController();
         this.name = name;
-        controller = getController();
+    }
+
+    public BluServo(String name, Direction direction) {
+        this(Globals.hwMap.get(ServoImpl.class, name), name, direction);
     }
 
     public BluServo(String name) {
         this(name, Direction.FORWARD);
+    }
+
+    public BluServo(String name, boolean reversed) {
+        this(name, reversed ? Direction.REVERSE : Direction.FORWARD);
     }
 
     public void setPosition(double position) {
@@ -32,6 +39,20 @@ public class BluServo extends ServoImpl implements BluHardwareDevice {
         return pos;
     }
 
+    /*
+        * Enable/disable the servo
+        *
+        * WATCH OOUT!!!!, each servo controller is connected to 2 servo ports,
+        * so using enable or disable might affect other servos
+     */
+    public void enable() {
+        controller.pwmEnable();
+    }
+
+    public void disable() {
+        controller.pwmDisable();
+    }
+
     public void init() {
     }
 
@@ -40,7 +61,7 @@ public class BluServo extends ServoImpl implements BluHardwareDevice {
     }
 
     public void write() {
-        if(Math.abs(pos - lastPos) > 0.005) {
+        if(Math.abs(pos - lastPos) > 0.003) {
             super.setPosition(pos);
             lastPos = pos;
         }
