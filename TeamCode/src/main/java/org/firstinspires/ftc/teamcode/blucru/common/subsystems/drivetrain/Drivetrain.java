@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Robot;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.control.DrivetrainTranslationPID;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.localization.FusedLocalizer;
 import org.firstinspires.ftc.teamcode.blucru.common.util.*;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
@@ -38,18 +39,12 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
             HEADING_PID_TOLERANCE = 0.05, // radians
             HEADING_AT_POSE_TOLERANCE = 0.15,
 
-            DISTANCE_P = 0.15, DISTANCE_I = 0, DISTANCE_D = 0.04, // PID constants for distance sensors
-            DISTANCE_PID_ANGLE_TOLERANCE = 0.5, // radians
-            OUTTAKE_DISTANCE = 3.6, // correct distance for outtake for distance PID
-
             TRANSLATION_P = 0.18, TRANSLATION_I = 0, TRANSLATION_D = 0.029, TRANSLATION_PID_TOLERANCE = 0, // PID constants for translation
             TRANSLATION_AT_POSE_TOLERANCE = 0.55,
 
             STATIC_TRANSLATION_VELOCITY_TOLERANCE = 25.0, // inches per second
             STATIC_HEADING_VELOCITY_TOLERANCE = Math.toRadians(100), // radians per second
-            STRAFE_kStatic = 0.05, FORWARD_kStatic = 0.02, // feedforward constants for static friction
-
-            TRAJECTORY_FOLLOWER_ERROR_TOLERANCE = 12.0; // inches to shut down auto
+            STRAFE_kStatic = 0.05, FORWARD_kStatic = 0.02; // feedforward constants for static friction
 
     enum State {
         TELEOP,
@@ -69,7 +64,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     public Pose2d accel;
     double lastTime;
 
-//    public DrivetrainTranslationPID translationPID;
+    public DrivetrainTranslationPID translationPID;
     public Pose2d targetPose;
     public FusedLocalizer fusedLocalizer;
 
@@ -90,7 +85,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         headingPID = new PIDController(HEADING_P, HEADING_I, HEADING_D);
         headingPID.setTolerance(HEADING_PID_TOLERANCE);
 
-//        translationPID = new DrivetrainTranslationPID(TRANSLATION_P, TRANSLATION_I, TRANSLATION_D, TRANSLATION_PID_TOLERANCE);
+        translationPID = new DrivetrainTranslationPID(TRANSLATION_P, TRANSLATION_I, TRANSLATION_D, TRANSLATION_PID_TOLERANCE);
         fusedLocalizer = new FusedLocalizer(getLocalizer(), hardwareMap);
         pose = new Pose2d(0,0,0);
         lastPose = Globals.startPose;
@@ -239,11 +234,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     // apply slew rate limiter to drive vector
     // i used it before, but too computationally intensive and slows robot too much i think
     // also theres def a better way to do this, doing it before scaling to drive power makes it so much worse
-    private Vector2d slewRateLimit(Vector2d input) {
-        // scale acceleration to match drive power
-        // maximum change in the drive vector per second at the drive power
-        double scaledMaxAccelVectorDelta = MAX_ACCEL_DRIVE_DELTA / drivePower;
-        double scaledMaxDecelVectorDelta = MAX_DECEL_DRIVE_DELTA / drivePower;
+    private Vector2d slewRateLimit(Vector2d input, Vector2d lastDriveVector) {
 
         // calculate the change between the last drive vector and the current drive vector
         Vector2d driveVectorDelta = input.minus(lastDriveVector);
@@ -253,10 +244,10 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
         if(decelerating) {
             // if we are decelerating, limit the delta to the max decel delta
-            limitedDriveVectorDeltaMagnitude = Range.clip(driveVectorDelta.norm(), 0, (scaledMaxDecelVectorDelta * dt / 1000.0));
+            limitedDriveVectorDeltaMagnitude = Range.clip(driveVectorDelta.norm(), 0, (MAX_DECEL_DRIVE_DELTA * dt / 1000.0));
         } else {
             // otherwise, limit the delta to the max accel delta
-            limitedDriveVectorDeltaMagnitude = Range.clip(driveVectorDelta.norm(), 0, (scaledMaxAccelVectorDelta * dt / 1000.0));
+            limitedDriveVectorDeltaMagnitude = Range.clip(driveVectorDelta.norm(), 0, (MAX_ACCEL_DRIVE_DELTA * dt / 1000.0));
         }
 
         // scale the drive vector delta to the limited magnitude
@@ -319,10 +310,10 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     }
 
     public void driveToPosition(Pose2d targetPosition) {
-//        translationPID.setTargetPosition(targetPosition.vec());
-//        Vector2d rawDriveVector = translationPID.calculate(pose.vec());
+        translationPID.setTargetPosition(targetPosition.vec());
+        Vector2d rawDriveVector = translationPID.calculate(pose.vec());
 
-//        driveToHeadingClip(rawDriveVector.getX(), rawDriveVector.getY(), targetPosition.getHeading());
+        driveToHeadingClip(rawDriveVector.getX(), rawDriveVector.getY(), targetPosition.getHeading());
     }
 
     // set the component of a vector in a direction
@@ -346,15 +337,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         return Angle.norm(heading + Math.signum(headingVel) * 0.5 * headingVel * headingVel / HEADING_DECELERATION);
     }
 
-    public boolean followerIsWithinTolerance() {
-        return getTrajectoryFollowerError() < TRAJECTORY_FOLLOWER_ERROR_TOLERANCE;
-    }
-
-    public double getTrajectoryFollowerError() {
-        Pose2d lastError = getLastError();
-        return lastError.vec().norm();
-    }
-
     public void idle() {
         drivetrainState = State.TELEOP;
         lastDriveVector = new Vector2d(0,0);
@@ -370,10 +352,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     public void setDrivePower(double power) {
         drivePower = Range.clip(power, 0.15, 1.0);
     }
-
-//    public void setDistancePID(double p, double i, double d) {
-//        distancePID.setPID(p, i, d);
-//    }
 
     public void setTurnPID(double p, double i, double d) {
         headingPID.setPID(p, i, d);
@@ -423,11 +401,11 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 //        return heading;
 //    }
 
-//    public void setTeleDrivePower(RobotState robotState, Gamepad gamepad) {
-//        boolean slow = gamepad.left_trigger > 0.1,
-//                fast = gamepad.right_trigger > 0.1;
-//
-//        double slowPower, fastPower, normalPower;
+    public void setTeleDrivePower(Gamepad gamepad) {
+        boolean slow = gamepad.left_trigger > 0.1,
+                fast = gamepad.right_trigger > 0.1;
+
+        double slowPower, fastPower, normalPower;
 //        switch (robotState) {
 //            case RETRACT: slowPower = 0.4; fastPower = 1.0; normalPower = 0.9; break;
 //            case INTAKING: slowPower = 0.3; fastPower = 1.0; normalPower = 0.85; break;
@@ -442,9 +420,8 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 //        else if(slow) setDrivePower(slowPower);
 //        else if(fast) setDrivePower(fastPower);
 //        else setDrivePower(normalPower);
-//    }
+    }
 
-    // resets heading
     public void resetHeading(double heading) {
         fusedLocalizer.resetHeading(heading);
         Log.i("Drivetrain", "Reset heading to " + heading);
@@ -504,15 +481,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
             return;
         }
     }
-
-//    public void startReadingDistance() {
-//        readingDistance = true;
-//        errors.clear();
-//    }
-//
-//    public void stopReadingDistance() {
-//        readingDistance = false;
-//    }
 
     public void correctY(double correction) {
         Pose2d newPose = new Pose2d(pose.getX(), pose.getY() + correction, pose.getHeading());
@@ -575,6 +543,5 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         telemetry.addData("odo heading", odoHeading);
         telemetry.addData("imu heading", imuHeading);
         telemetry.addData("accel magnitude", accel.vec().norm());
-//        distanceSensors.telemetry(telemetry);
     }
 }
