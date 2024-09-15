@@ -16,7 +16,7 @@ public class BluMotor extends DcMotorImpl implements BluHardwareDevice {
     double offsetTicks = 0;
     boolean useEncoder = false;
 
-    public BluMotor(String name, DcMotor motor, Direction direction, boolean useEncoder, ZeroPowerBehavior zeroPowerBehavior) {
+    public BluMotor(DcMotor motor, String name, Direction direction, boolean useEncoder, ZeroPowerBehavior zeroPowerBehavior) {
         super(motor.getController(), motor.getPortNumber(), direction);
         this.name = name;
         this.useEncoder = useEncoder;
@@ -44,7 +44,7 @@ public class BluMotor extends DcMotorImpl implements BluHardwareDevice {
 
     public void write() {
         // only update if power has changed
-        if(Math.abs(power - lastPower) > 0.02)
+        if(Math.abs(power - lastPower) > 0.005)
             super.setPower(power);
 
         lastPower = power;

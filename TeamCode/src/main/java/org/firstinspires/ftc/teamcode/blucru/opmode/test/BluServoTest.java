@@ -28,8 +28,7 @@ public class BluServoTest extends LinearOpMode {
                 servo.disable();
             }
 
-            telemetry.addData("name", name);
-            telemetry.addData("position", servo.getPosition());
+            servo.telemetry();
             telemetry.update();
         }
     }

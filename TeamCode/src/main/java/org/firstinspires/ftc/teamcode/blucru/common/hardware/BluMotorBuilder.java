@@ -37,6 +37,6 @@ public class BluMotorBuilder {
         DcMotor motor = Globals.hwMap.get(DcMotor.class, name);
         Direction direction = reversed ? Direction.REVERSE : Direction.FORWARD;
         ZeroPowerBehavior zeroPowerBehavior = brake ? ZeroPowerBehavior.BRAKE : ZeroPowerBehavior.FLOAT;
-        return new BluMotor(name, motor, direction, useEncoder, zeroPowerBehavior);
+        return new BluMotor(motor, name,direction, useEncoder, zeroPowerBehavior);
     }
 }
