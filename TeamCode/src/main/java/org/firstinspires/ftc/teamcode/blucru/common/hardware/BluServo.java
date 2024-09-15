@@ -12,13 +12,6 @@ public class BluServo extends ServoImpl implements BluHardwareDevice {
     ServoController controller;
     double pos=0, lastPos=0;
 
-    private BluServo(ServoImpl servo, String name, Direction direction) {
-        super(servo.getController(), servo.getPortNumber(), servo.getDirection());
-        this.setDirection(direction);
-        this.controller = servo.getController();
-        this.name = name;
-    }
-
     public BluServo(String name, Direction direction) {
         this(Globals.hwMap.get(ServoImpl.class, name), name, direction);
     }
@@ -29,6 +22,13 @@ public class BluServo extends ServoImpl implements BluHardwareDevice {
 
     public BluServo(String name, boolean reversed) {
         this(name, reversed ? Direction.REVERSE : Direction.FORWARD);
+    }
+
+    private BluServo(ServoImpl servo, String name, Direction direction) {
+        super(servo.getController(), servo.getPortNumber(), servo.getDirection());
+        this.setDirection(direction);
+        this.controller = servo.getController();
+        this.name = name;
     }
 
     public void setPosition(double position) {

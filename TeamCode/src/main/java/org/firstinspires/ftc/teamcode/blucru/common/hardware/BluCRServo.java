@@ -13,14 +13,20 @@ public class BluCRServo extends CRServoImpl implements BluHardwareDevice{
     double power, lastPower;
 
     public BluCRServo(String name, Direction direction) {
-        super(Globals.hwMap.get(CRServo.class, name).getController(),
-                Globals.hwMap.get(CRServo.class, name).getPortNumber(), direction);
+        this(Globals.hwMap.get(CRServo.class, name), name, direction);
         power = 0;
         lastPower = 0;
     }
 
     public BluCRServo(String name) {
         this(name, Direction.FORWARD);
+    }
+
+    private BluCRServo(CRServo servo, String name, Direction direction) {
+        super(servo.getController(), servo.getPortNumber(), direction);
+        this.name = name;
+        power = 0;
+        lastPower = 0;
     }
 
     @Override
@@ -36,7 +42,7 @@ public class BluCRServo extends CRServoImpl implements BluHardwareDevice{
 
     @Override
     public void write() {
-        if(Math.abs(power - lastPower) > 0.03) {
+        if(Math.abs(power - lastPower) > 0.003) {
             super.setPower(power);
         }
         lastPower = power;
