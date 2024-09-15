@@ -65,21 +65,6 @@ public class SampleMecanumDrive extends MecanumDrive {
     private List<Integer> lastEncPositions = new ArrayList<>();
     private List<Integer> lastEncVels = new ArrayList<>();
 
-    boolean isTeleOp;
-
-    public SampleMecanumDrive(HardwareMap hardwareMap, boolean isTeleOp) {
-        this(hardwareMap);
-
-        this.isTeleOp = isTeleOp;
-
-        if(isTeleOp) {
-//            imu = hardwareMap.get(IMU.class, "imu");
-//            IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-//                    DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
-//            imu.initialize(parameters);
-        }
-    }
-
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(DriveConstants.kV, DriveConstants.kA, DriveConstants.kStatic, DriveConstants.TRACK_WIDTH, DriveConstants.TRACK_WIDTH, LATERAL_MULTIPLIER);
 
@@ -158,14 +143,6 @@ public class SampleMecanumDrive extends MecanumDrive {
         );
     }
 
-//    public BCTrajectorySequenceBuilder KTrajectorySequenceBuilder(Pose2d startPose) {
-//        return new BCTrajectorySequenceBuilder(
-//                startPose,
-//                VEL_CONSTRAINT, ACCEL_CONSTRAINT,
-//                MAX_ANG_VEL, MAX_ANG_ACCEL
-//        );
-//    }
-
     public void turnAsync(double angle) {
         trajectorySequenceRunner.followTrajectorySequenceAsync(
                 trajectorySequenceBuilder(getPoseEstimate())
@@ -177,14 +154,6 @@ public class SampleMecanumDrive extends MecanumDrive {
     public void turn(double angle) {
         turnAsync(angle);
         waitForIdle();
-    }
-
-    public void resetIMU(double heading) {
-//        imu.resetDeviceConfigurationForOpMode();
-//        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-//                DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
-//        imu.initialize(parameters);
-//        this.setExternalHeading(heading);
     }
 
     public void followTrajectoryAsync(Trajectory trajectory) {
