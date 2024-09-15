@@ -77,7 +77,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
 
         end();
         Robot.kill();
-        Log.i("BCLinearOpMode", "OpMode Stopped");
+        Log.i("BluLinearOpMode", "OpMode Stopped");
     }
 
     // methods to be overriden
