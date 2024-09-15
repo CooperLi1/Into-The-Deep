@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Config
-@TeleOp(name = "crservo test", group = "hardware test")
+@TeleOp(name = "CRServo test", group = "hardware test")
 public class CRServoTest extends LinearOpMode {
     public static String name = "intake roller";
     public static boolean reversed = false;
