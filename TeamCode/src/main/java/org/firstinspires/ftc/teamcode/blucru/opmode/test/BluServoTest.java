@@ -22,12 +22,15 @@ public class BluServoTest extends LinearOpMode {
 
         waitForStart();
         while(opModeIsActive()) {
+            servo.read();
+
             if(gamepad1.a) {
                 servo.setPosition(position);
             } else {
                 servo.disable();
             }
 
+            servo.write();
             servo.telemetry();
             telemetry.update();
         }

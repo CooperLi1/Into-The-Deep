@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
-
 public class BluServo extends ServoImpl implements BluHardwareDevice {
     String name;
     ServoController controller;
@@ -61,13 +60,18 @@ public class BluServo extends ServoImpl implements BluHardwareDevice {
     }
 
     public void write() {
-        if(Math.abs(pos - lastPos) > 0.003) {
-            super.setPosition(pos);
-            lastPos = pos;
+        try {
+            if(Math.abs(pos - lastPos) > 0.003) {
+                super.setPosition(pos);
+                lastPos = pos;
+            }
+        } catch (Exception e) {
         }
     }
 
     public void telemetry() {
-         Globals.tele.addLine(name + " pos: " + pos);
+        try {
+            Globals.tele.addLine(name + " pos: " + pos);
+        } catch (Exception ignored) {}
     }
 }
