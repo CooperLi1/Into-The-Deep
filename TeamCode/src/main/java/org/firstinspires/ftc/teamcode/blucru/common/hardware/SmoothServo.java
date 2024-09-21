@@ -15,8 +15,6 @@ public class SmoothServo extends BluServo implements BluHardwareDevice {
     Lower kPrev = less smoothing
     Higher kPrev = more smoothing
 
-    A decent range for kPrev is 0 to 0.05
-
     keep in mind, a smooth servo will continuously
     be updating position, which results in longer loop times
 

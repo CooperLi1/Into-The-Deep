@@ -18,6 +18,7 @@ public class BluServoTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Globals.hwMap = hardwareMap;
+        Globals.tele = telemetry;
         servo = new BluServo(name, reversed);
 
         waitForStart();
@@ -26,6 +27,8 @@ public class BluServoTest extends LinearOpMode {
 
             if(gamepad1.a) {
                 servo.setPosition(position);
+            } else if (gamepad1.b) {
+                servo.rawSetPosition(position);
             } else {
                 servo.disable();
             }

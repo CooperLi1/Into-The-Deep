@@ -60,12 +60,9 @@ public class BluServo extends ServoImpl implements BluHardwareDevice {
     }
 
     public void write() {
-        try {
-            if(Math.abs(pos - lastPos) > 0.003) {
-                super.setPosition(pos);
-                lastPos = pos;
-            }
-        } catch (Exception e) {
+        if(Math.abs(pos - lastPos) > 0.003) {
+            super.setPosition(pos);
+            lastPos = pos;
         }
     }
 
