@@ -4,8 +4,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluMotor;
-import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluMotorBuilder;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.wrappers.BluMotor;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.wrappers.BluMotorBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 @Config

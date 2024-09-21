@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.hardware;
 
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.wrappers.BluHardwareDevice;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.wrappers.BluServo;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 public class SmoothServo extends BluServo implements BluHardwareDevice {
@@ -28,6 +30,16 @@ public class SmoothServo extends BluServo implements BluHardwareDevice {
         kPrev = defaultKPrev;
     }
 
+    public SmoothServo(String name, boolean reversed) {
+        super(name, reversed);
+        kPrev = defaultKPrev;
+    }
+
+    public SmoothServo(String name, boolean reversed, double kPrev) {
+        super(name, reversed);
+        this.kPrev = kPrev;
+    }
+
     public SmoothServo(String name) {
         super(name);
         kPrev = defaultKPrev;
@@ -52,7 +64,7 @@ public class SmoothServo extends BluServo implements BluHardwareDevice {
     }
 
     public void write() {
-        super.setPosition(kPrev * pos + (1 - kPrev) * targetPosition);
+        super.setPosition(kPrev * super.getPosition() + (1 - kPrev) * targetPosition);
         super.write();
     }
 
@@ -61,7 +73,7 @@ public class SmoothServo extends BluServo implements BluHardwareDevice {
     }
 
     public void telemetry() {
-        Globals.tele.addData(name + "target pos", targetPosition);
+        Globals.tele.addData(super.getName() + "target pos", targetPosition);
         super.telemetry();
     }
 }

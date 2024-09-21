@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.hardware;
+package org.firstinspires.ftc.teamcode.blucru.common.hardware.wrappers;
 
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.hardware.ServoImpl;
@@ -67,6 +67,10 @@ public class BluServo extends ServoImpl implements BluHardwareDevice {
             }
         } catch (Exception e) {
         }
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void telemetry() {

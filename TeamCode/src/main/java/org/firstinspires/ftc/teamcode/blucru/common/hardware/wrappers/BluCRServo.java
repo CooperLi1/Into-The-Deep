@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.hardware;
+package org.firstinspires.ftc.teamcode.blucru.common.hardware.wrappers;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.CRServoImpl;
@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 
 // all the hardware wrapper classes need testing
-public class BluCRServo extends CRServoImpl implements BluHardwareDevice{
+public class BluCRServo extends CRServoImpl implements BluHardwareDevice {
     String name;
     double power, lastPower;
 
