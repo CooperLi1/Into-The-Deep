@@ -29,6 +29,8 @@ public class SmoothServoTest extends LinearOpMode {
         while(opModeIsActive()) {
             servo.read();
 
+            servo.setKPrev(kPrev);
+
             if(gamepad1.a) {
                 servo.setPosition(position);
             } else {

@@ -62,13 +62,16 @@ public class SmoothServo extends BluServo implements BluHardwareDevice {
     }
 
     public void write() {
-
         super.setPosition(kPrev * super.getPosition() + (1 - kPrev) * finalPosition);
         super.write();
     }
 
     public void setPosition(double position) {
         finalPosition = position;
+    }
+
+    public void setKPrev(double kPrev) {
+        this.kPrev = kPrev;
     }
 
     public void telemetry() {
