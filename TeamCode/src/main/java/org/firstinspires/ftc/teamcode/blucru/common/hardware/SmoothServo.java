@@ -21,7 +21,7 @@ public class SmoothServo extends BluServo implements BluHardwareDevice {
      */
 
     double kPrev; // weight of previous position in smoothing
-    double targetPosition;
+    double finalPosition, currentPosition;
 
     public SmoothServo(String name, Direction direction) {
         super(name, direction);
@@ -62,16 +62,17 @@ public class SmoothServo extends BluServo implements BluHardwareDevice {
     }
 
     public void write() {
-        super.setPosition(kPrev * super.getPosition() + (1 - kPrev) * targetPosition);
+
+        super.setPosition(kPrev * super.getPosition() + (1 - kPrev) * finalPosition);
         super.write();
     }
 
     public void setPosition(double position) {
-        targetPosition = position;
+        finalPosition = position;
     }
 
     public void telemetry() {
-        Globals.tele.addData(super.getName() + "target pos", targetPosition);
+        Globals.tele.addData(super.getName() + "target pos", finalPosition);
         super.telemetry();
     }
 }
