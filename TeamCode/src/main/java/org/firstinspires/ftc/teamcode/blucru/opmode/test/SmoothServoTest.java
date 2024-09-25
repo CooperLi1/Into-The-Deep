@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.SmoothServo;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.StickyGamepad;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 @Config
@@ -12,31 +13,30 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 public class SmoothServoTest extends LinearOpMode {
     public static String name = "wrist";
     public static boolean reversed = false;
-    public static double kPrev = 0.1;
+    public static double vMax = 0.1, aMax = 0.2;
     public static double position = 0.5;
 
     SmoothServo servo;
+    StickyGamepad g1 = new StickyGamepad(gamepad1);
 
     @Override
     public void runOpMode() throws InterruptedException {
         Globals.hwMap = hardwareMap;
         Globals.tele = telemetry;
 
-        servo = new SmoothServo(name, reversed, kPrev);
+        servo = new SmoothServo(name, reversed, vMax, aMax);
 
         waitForStart();
 
         while(opModeIsActive()) {
             servo.read();
+            servo.setConstraints(vMax, aMax);
 
-            servo.setKPrev(kPrev);
-
-            if(gamepad1.a) {
+            if(g1.a) {
                 servo.setPosition(position);
-            } else {
-                servo.disable();
             }
 
+            g1.update();
             servo.write();
             servo.telemetry();
             telemetry.update();

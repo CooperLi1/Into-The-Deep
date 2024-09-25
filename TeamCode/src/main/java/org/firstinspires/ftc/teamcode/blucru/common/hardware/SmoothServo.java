@@ -3,54 +3,23 @@ package org.firstinspires.ftc.teamcode.blucru.common.hardware;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.wrappers.BluHardwareDevice;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.wrappers.BluServo;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.MotionProfile;
 
 public class SmoothServo extends BluServo implements BluHardwareDevice {
-    final static double defaultKPrev = 0.03;
+    static final double defaultVmax = 0.5, defaultAmax = 0.5;
 
-    /*
-
-    A kPrev of 0 will result in no smoothing,
-    while a kPrev of 1 will result in most smoothing
-
-    Lower kPrev = less smoothing
-    Higher kPrev = more smoothing
-
-    keep in mind, a smooth servo will continuously
-    be updating position, which results in longer loop times
-
-     */
-
-    double kPrev; // weight of previous position in smoothing
+    MotionProfile motionProfile;
     double finalPosition, currentPosition;
-
-    public SmoothServo(String name, Direction direction) {
-        super(name, direction);
-        kPrev = defaultKPrev;
-    }
+    double vMax, aMax;
 
     public SmoothServo(String name, boolean reversed) {
+        this(name, reversed, defaultVmax, defaultAmax);
+    }
+
+    public SmoothServo(String name, boolean reversed, double vMax, double aMax) {
         super(name, reversed);
-        kPrev = defaultKPrev;
-    }
-
-    public SmoothServo(String name, boolean reversed, double kPrev) {
-        super(name, reversed);
-        this.kPrev = kPrev;
-    }
-
-    public SmoothServo(String name) {
-        super(name);
-        kPrev = defaultKPrev;
-    }
-
-    public SmoothServo(String name, double kPrev) {
-        super(name);
-        this.kPrev = kPrev;
-    }
-
-    public SmoothServo(String name, Direction direction, double kPrev) {
-        super(name, direction);
-        this.kPrev = kPrev;
+        this.vMax = vMax;
+        this.aMax = aMax;
     }
 
     public void init() {
@@ -62,20 +31,27 @@ public class SmoothServo extends BluServo implements BluHardwareDevice {
     }
 
     public void write() {
-        super.setPosition(kPrev * super.getPosition() + (1 - kPrev) * finalPosition);
-        super.write();
+        if(motionProfile != null) {
+            currentPosition = motionProfile.getInstantTargetPosition();
+            super.setPosition(currentPosition);
+        }
     }
 
     public void setPosition(double position) {
         finalPosition = position;
+        motionProfile = new MotionProfile(currentPosition, finalPosition, vMax, aMax).start();
     }
 
-    public void setKPrev(double kPrev) {
-        this.kPrev = kPrev;
+    public void setConstraints(double vMax, double aMax) {
+        this.vMax = vMax;
+        this.aMax = aMax;
     }
 
     public void telemetry() {
-        Globals.tele.addData(super.getName() + "target pos", finalPosition);
+        addLine("Target Pos: " + finalPosition);
+        addLine("Current Pos: " + currentPosition);
+//        Globals.tele.addData(super.getName() + "target pos", finalPosition);
+//        Globals.tele.addData(super.getName() + "current pos", currentPosition);
         super.telemetry();
     }
 }

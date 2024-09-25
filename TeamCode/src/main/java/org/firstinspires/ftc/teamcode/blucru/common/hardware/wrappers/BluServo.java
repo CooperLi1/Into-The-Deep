@@ -75,4 +75,10 @@ public class BluServo extends ServoImpl implements BluHardwareDevice {
             Globals.tele.addLine(name + " pos: " + pos);
         } catch (Exception ignored) {}
     }
+
+    public void addLine(String str) {
+        try {
+            Globals.tele.addLine(name + " " + str);
+        } catch (Exception ignored) {}
+    }
 }
