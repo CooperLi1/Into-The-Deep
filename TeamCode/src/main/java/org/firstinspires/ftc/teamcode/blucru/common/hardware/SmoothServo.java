@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.MotionProfile;
 
 public class SmoothServo extends BluServo implements BluHardwareDevice {
-    static final double defaultVmax = 0.5, defaultAmax = 0.5;
+    static final double defaultVmax = 3, defaultAmax = 4;
 
     MotionProfile motionProfile;
     double finalPosition, currentPosition;
@@ -31,15 +31,18 @@ public class SmoothServo extends BluServo implements BluHardwareDevice {
     }
 
     public void write() {
-        if(motionProfile != null) {
+        try {
             currentPosition = motionProfile.getInstantTargetPosition();
             super.setPosition(currentPosition);
+        } catch (Exception e) {
+
         }
+        super.write();
     }
 
     public void setPosition(double position) {
         finalPosition = position;
-        motionProfile = new MotionProfile(currentPosition, finalPosition, vMax, aMax).start();
+        motionProfile = new MotionProfile(finalPosition, currentPosition, vMax, aMax).start();
     }
 
     public void setConstraints(double vMax, double aMax) {
@@ -48,10 +51,8 @@ public class SmoothServo extends BluServo implements BluHardwareDevice {
     }
 
     public void telemetry() {
-        addLine("Target Pos: " + finalPosition);
-        addLine("Current Pos: " + currentPosition);
-//        Globals.tele.addData(super.getName() + "target pos", finalPosition);
-//        Globals.tele.addData(super.getName() + "current pos", currentPosition);
+        Globals.tele.addData("Target Pos: ", finalPosition);
+        Globals.tele.addData("Current Pos: ", currentPosition);
         super.telemetry();
     }
 }

@@ -8,13 +8,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 public class BluMotor extends DcMotorImpl implements BluHardwareDevice {
-    public static double RING_BUFFER_MILLIS = 30;
+    public static double RING_BUFFER_MILLIS = 8;
 
     String name;
     double power = 0, lastPower = 0;
     double encoderTicks = 0, vel = 0;
     double offsetTicks = 0;
     boolean useEncoder = false;
+    double lastVelTime, lastPos;
 
     public BluMotor(DcMotor motor, String name, Direction direction, boolean useEncoder, ZeroPowerBehavior zeroPowerBehavior) {
         super(motor.getController(), motor.getPortNumber(), direction);
@@ -32,13 +33,21 @@ public class BluMotor extends DcMotorImpl implements BluHardwareDevice {
         super.setPower(0);
         resetEncoder();
         offsetTicks = 0;
+        lastVelTime = System.currentTimeMillis();
+        lastPos = encoderTicks;
     }
 
     public void read() {
         // only update if encoder is being used
         if(useEncoder) {
             encoderTicks = super.getCurrentPosition();
-            // TODO: velocity calculation, use ring buffer
+            if(System.currentTimeMillis() - lastVelTime > RING_BUFFER_MILLIS) {
+                double deltaPos = encoderTicks - lastPos;
+                double deltaTime = System.currentTimeMillis() - lastVelTime;
+                vel = deltaPos / (deltaTime / 1000.0);
+                lastPos = encoderTicks;
+                lastVelTime = System.currentTimeMillis();
+            }
         }
     }
 
