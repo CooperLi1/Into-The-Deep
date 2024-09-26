@@ -42,6 +42,7 @@ public class SmoothServo extends BluServo implements BluHardwareDevice {
 
     public void setPosition(double position) {
         finalPosition = position;
+        if(motionProfile == null) currentPosition = position;
         motionProfile = new MotionProfile(finalPosition, currentPosition, vMax, aMax).start();
     }
 
