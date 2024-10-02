@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsystems.vision;
+package org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.localization;
 
 import android.util.Log;
 
@@ -13,16 +13,14 @@ import java.util.List;
 
 public final class AprilTagPoseGetter {
     public static Vector2d CAMERA_POS = new Vector2d(-6.61, 3.78); // position of the camera relative to the center of the robot in inches
-    public static double
-            TAG_X = 62,
-            MAX_UPDATE_DISTANCE = 60; // maximum update distance
+    public static double MAX_UPDATE_DISTANCE = 60; // maximum update distance
     public static HashMap<Integer, Pose2d> TAGS = new HashMap<Integer, Pose2d>() {{
-        put(1, new Pose2d(TAG_X, 41.5, Math.toRadians(180))); // tag 1 (red right)
-        put(2, new Pose2d(TAG_X, 36, Math.toRadians(180))); // tag 2 (red center)
-        put(3, new Pose2d(TAG_X, 30.5, Math.toRadians(180))); // tag 3 (red left)
-        put(4, new Pose2d(TAG_X, -30.5, Math.toRadians(180))); // tag 4 (blue right)
-        put(5, new Pose2d(TAG_X, -36, Math.toRadians(180))); // tag 5 (blue center)
-        put(6, new Pose2d(TAG_X, -41.5, Math.toRadians(180))); // tag 6 (blue left)
+        put(11, new Pose2d(-72, 48, 0)); // tag 11
+        put(12, new Pose2d(0, 72, -Math.PI/2)); // tag 12
+        put(13, new Pose2d(72, 48, Math.PI)); // tag 13
+        put(14, new Pose2d(72, -48, Math.PI)); // tag 14
+        put(15, new Pose2d(0, -72, Math.PI/2)); // tag 15
+        put(16, new Pose2d(-72, -48, 0)); // tag 16
     }};
 
     public static Vector2d getRobotToTagVector(double detectionX, double detectionY) {
