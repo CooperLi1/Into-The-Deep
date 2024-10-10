@@ -16,12 +16,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.control.DrivetrainTranslationPID;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.localization.FusedLocalizer;
 import org.firstinspires.ftc.teamcode.blucru.common.util.*;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
-//import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.localization.FusedLocalizer;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.util.DashboardUtil;
@@ -35,8 +33,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
             MAX_ACCEL_PID_DELTA = 2, // magnitude per second at power 1 for PID
 
             HEADING_DECELERATION = 10, // radians per second squared, for calculating new target heading after turning
-            HEADING_P = 1.35, HEADING_I = 0, HEADING_D = 0.09, // PID constants for heading
-            HEADING_PID_TOLERANCE = 0.05, // radians
+            HEADING_P = 1.35, HEADING_I = 0, HEADING_D = 0.09, HEADING_PID_TOLERANCE = 0.05, // radians
             HEADING_AT_POSE_TOLERANCE = 0.15,
 
             TRANSLATION_P = 0.18, TRANSLATION_I = 0, TRANSLATION_D = 0.029, TRANSLATION_PID_TOLERANCE = 0, // PID constants for translation
@@ -53,7 +50,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     }
 
     public State drivetrainState;
-    boolean isTeleOp;
     public double drivePower = 0.5;
     double dt;
     public Pose2d pose;
@@ -70,18 +66,17 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     PIDController headingPID;
     double targetHeading = 0;
-    double heading; // estimated field heading (0 is facing right, positive is counterclockwise)
-    double imuHeading; // heading retrieved from IMU
-    double odoHeading; // heading retrieved from odometry
-    public boolean fieldCentric; // whether the robot is field centric or robot centric
+    double heading;
+    double imuHeading;
+    double odoHeading; // heading retrieved from 3 wheel odometry
+    public boolean fieldCentric;
 
     Vector2d lastDriveVector; // drive vector in previous loop
     double lastRotateInput; // rotate input in previous loop
 
-    public Drivetrain(HardwareMap hardwareMap, boolean isTeleOp) {
+    public Drivetrain(HardwareMap hardwareMap) {
         super(hardwareMap);
         this.drivetrainState = State.TELEOP;
-        this.isTeleOp = isTeleOp;
         headingPID = new PIDController(HEADING_P, HEADING_I, HEADING_D);
         headingPID.setTolerance(HEADING_PID_TOLERANCE);
 
@@ -520,12 +515,9 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     }
 
     public void telemetry(Telemetry telemetry) {
-        if(isTeleOp) {
-            telemetry.addData("drive power", drivePower);
-            telemetry.addData("field centric", fieldCentric);
-            telemetry.addData("target heading", targetHeading);
-        }
-
+        telemetry.addData("drive power", drivePower);
+        telemetry.addData("field centric", fieldCentric);
+        telemetry.addData("target heading", targetHeading);
         telemetry.addData("DRIVETRAIN STATE:", drivetrainState);
         telemetry.addData("heading", heading);
         telemetry.addData("pose x", pose.getX());
