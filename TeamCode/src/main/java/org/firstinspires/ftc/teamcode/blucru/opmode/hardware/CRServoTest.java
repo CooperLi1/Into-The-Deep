@@ -9,12 +9,12 @@ import com.qualcomm.robotcore.hardware.CRServoImplEx;
 @Config
 @TeleOp(name = "CRServo test", group = "hardware test")
 public class CRServoTest extends LinearOpMode {
-    public static String name = "intake roller";
+    public static String name = "intake";
     public static boolean reversed = false;
     CRServo test;
     @Override
     public void runOpMode() throws InterruptedException {
-        test = hardwareMap.get(CRServo.class, name);
+        updateName();
         waitForStart();
         while(opModeIsActive()) {
             updateName();
