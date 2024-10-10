@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.blucru.common.hardware;
+package org.firstinspires.ftc.teamcode.blucru.common.hardware.servo;
 
-import org.firstinspires.ftc.teamcode.blucru.common.hardware.wrappers.BluHardwareDevice;
-import org.firstinspires.ftc.teamcode.blucru.common.hardware.wrappers.BluServo;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluHardwareDevice;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.MotionProfile;
 

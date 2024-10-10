@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.hardware.wrappers;
+package org.firstinspires.ftc.teamcode.blucru.common.hardware;
 
 public interface BluHardwareDevice {
     void init();

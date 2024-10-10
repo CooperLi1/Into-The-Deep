@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.blucru.common.hardware.wrappers;
+package org.firstinspires.ftc.teamcode.blucru.common.hardware.servo;
 
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.hardware.ServoImpl;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluHardwareDevice;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 public class BluServo extends ServoImpl implements BluHardwareDevice {

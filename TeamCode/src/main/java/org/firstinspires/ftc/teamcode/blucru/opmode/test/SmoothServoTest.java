@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.blucru.common.hardware.SmoothServo;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.SmoothServo;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.StickyGamepad;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 

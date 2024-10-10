@@ -1,10 +1,11 @@
-package org.firstinspires.ftc.teamcode.blucru.common.hardware.wrappers;
+package org.firstinspires.ftc.teamcode.blucru.common.hardware.motor;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluHardwareDevice;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 public class BluMotor extends DcMotorImpl implements BluHardwareDevice {

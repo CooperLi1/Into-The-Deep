@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode.blucru.common.hardware.wrappers;
+package org.firstinspires.ftc.teamcode.blucru.common.hardware.servo;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.CRServoImpl;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluHardwareDevice;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 
