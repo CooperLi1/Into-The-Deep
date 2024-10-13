@@ -21,13 +21,12 @@ import java.util.concurrent.TimeUnit;
 
 @Config
 public class CVMaster implements Subsystem {
-    public static double fx = 1059.73;
-    public static double fy = 1059.73;
-    public static double cx = 625.979;
-    public static double cy = 362.585;
+    public static double fx = 914.686;
+    public static double fy = 914.686;
+    public static double cx = 633.716;
+    public static double cy = 368.105;
     public static int GAIN = 0;
     public static long EXPOSURE = 5; // ms
-    public static double FOCUS = 1;
 
     ExposureControl exposureControl;
     GainControl gainControl;
@@ -102,8 +101,6 @@ public class CVMaster implements Subsystem {
         exposureControl.setMode(ExposureControl.Mode.Manual);
         exposureControl.setExposure(EXPOSURE, TimeUnit.MILLISECONDS);
         gainControl.setGain(GAIN);
-        focusControl.setMode(FocusControl.Mode.Fixed);
-        setCameraFocus(FOCUS);
     }
 
     public void stop() {
@@ -117,9 +114,5 @@ public class CVMaster implements Subsystem {
 
     public boolean setCameraGain(double gain) {
         return gainControl.setGain((int) gain);
-    }
-
-    public boolean setCameraFocus(double focus) {
-        return focusControl.setFocusLength(focus);
     }
 }
