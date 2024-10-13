@@ -11,7 +11,20 @@ public class BluMotor extends DcMotorImpl implements BluHardwareDevice {
     String name;
     double power = 0, lastPower = 0;
 
-    public BluMotor(DcMotor motor, String name, Direction direction, ZeroPowerBehavior zpb) {
+    public BluMotor(String name, Direction direction) {
+        this(name, direction, ZeroPowerBehavior.FLOAT);
+    }
+
+    public BluMotor(String name) {
+        this(name, Direction.FORWARD, ZeroPowerBehavior.FLOAT);
+    }
+
+    public BluMotor(String name, Direction direction, ZeroPowerBehavior zpb) {
+        this(Globals.hwMap.get(DcMotor.class, name), name, direction, zpb);
+    }
+
+    // main constructor, made private to hide motor object
+    private BluMotor(DcMotor motor, String name, Direction direction, ZeroPowerBehavior zpb) {
         super(motor.getController(), motor.getPortNumber(), direction);
         this.name = name;
         super.setZeroPowerBehavior(zpb);

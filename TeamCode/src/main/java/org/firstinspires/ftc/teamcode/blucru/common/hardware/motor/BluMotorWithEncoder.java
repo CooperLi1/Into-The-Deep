@@ -17,7 +17,20 @@ public class BluMotorWithEncoder extends DcMotorImpl implements BluHardwareDevic
     double offsetTicks = 0;
     double lastVelTime, lastPos;
 
-    public BluMotorWithEncoder(DcMotor motor, String name, Direction direction, ZeroPowerBehavior zeroPowerBehavior) {
+    public BluMotorWithEncoder(String name, Direction direction) {
+        this(name, direction, ZeroPowerBehavior.FLOAT);
+    }
+
+    public BluMotorWithEncoder(String name) {
+        this(name, Direction.FORWARD, ZeroPowerBehavior.FLOAT);
+    }
+
+    public BluMotorWithEncoder(String name, Direction direction, ZeroPowerBehavior zeroPowerBehavior) {
+        this(Globals.hwMap.get(DcMotor.class, name), name, direction, zeroPowerBehavior);
+    }
+
+    // main constructor, made private to hide motor object
+    private BluMotorWithEncoder(DcMotor motor, String name, Direction direction, ZeroPowerBehavior zeroPowerBehavior) {
         super(motor.getController(), motor.getPortNumber(), direction);
         this.name = name;
         super.setZeroPowerBehavior(zeroPowerBehavior);
