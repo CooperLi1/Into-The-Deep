@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.Drivetrain;
 
 import java.util.ArrayList;
 
@@ -12,7 +13,7 @@ public class Robot {
     HardwareMap hardwareMap; // reference to hardware
 
     // all subsystems
-    // public Drivetrain dt;
+    public Drivetrain dt;
 
     // list of all subsystems
     ArrayList<Subsystem> subsystems;
@@ -76,9 +77,11 @@ public class Robot {
             subsystem.telemetry(telemetry);
         }
     }
-    
-    public void addSubsystem(Subsystem subsystem) {
-        subsystems.add(subsystem);
+
+    public Drivetrain addDrivetrain() {
+        dt = new Drivetrain(hardwareMap, true);
+        subsystems.add(dt);
+        return dt;
     }
 
     // call this after every op mode

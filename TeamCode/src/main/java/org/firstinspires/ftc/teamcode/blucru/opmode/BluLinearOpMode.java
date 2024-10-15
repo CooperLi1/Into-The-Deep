@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.Drivet
 public abstract class BluLinearOpMode extends LinearOpMode {
     public Alliance alliance;
     public Robot robot;
-    public Drivetrain drivetrain;
+    public Drivetrain dt;
 
     public StickyGamepad stickyG1;
     public StickyGamepad stickyG2;
@@ -98,13 +98,11 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public void telemetry() {}
     public void end() {}
 
+    public void addDrivetrain() {
+        dt = robot.addDrivetrain();
+    }
 
-//    public void addOuttake() {outtake = robot.addOuttake();}
-
-
-    /*
-    this method is used to enable the FTC Dashboard telemetry and field overlay
-     */
+    // enable the FTC Dashboard telemetry and field overlay
     public void enableFTCDashboard() {telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);}
 
     public double currentSecs() {return runtime.seconds();}
