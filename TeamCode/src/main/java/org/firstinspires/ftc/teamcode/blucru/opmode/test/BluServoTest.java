@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluServo;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 @Config
@@ -18,16 +18,20 @@ public class BluServoTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Globals.hwMap = hardwareMap;
+        Globals.tele = telemetry;
         servo = new BluServo(name, reversed);
 
         waitForStart();
         while(opModeIsActive()) {
+            servo.read();
+
             if(gamepad1.a) {
                 servo.setPosition(position);
             } else {
                 servo.disable();
             }
 
+            servo.write();
             servo.telemetry();
             telemetry.update();
         }

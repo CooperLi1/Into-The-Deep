@@ -31,13 +31,17 @@ public abstract class BluLinearOpMode extends LinearOpMode {
         Globals.runtime = new ElapsedTime();
         CommandScheduler.getInstance().cancelAll();
         alliance = Globals.alliance;
+        Globals.setVoltage(robot.getVoltage());
+
         stickyG1 = new StickyGamepad(gamepad1);
         stickyG2 = new StickyGamepad(gamepad2);
+
         robot = Robot.getInstance();
         robot.create(hardwareMap);
-        Globals.setVoltage(robot.getVoltage());
+
         initialize();
         robot.init();
+
         while(opModeInInit()) {
             stickyG1.update();
             stickyG2.update();
@@ -58,6 +62,12 @@ public abstract class BluLinearOpMode extends LinearOpMode {
             stickyG1.update();
             stickyG2.update();
             robot.read();
+
+            // safety for switching controllers
+            if(gamepad1.start || gamepad2.start) {
+                continue;
+            }
+
             periodic();
             CommandScheduler.getInstance().run();
             robot.write();
