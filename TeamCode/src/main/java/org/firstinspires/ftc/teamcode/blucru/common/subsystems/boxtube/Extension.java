@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
 
 @Config
 public class Extension implements Subsystem {
-    public static double kP = 0.0, kI = 0.0, kD = 0.0, tolerance = 0.0,
+    public static double kP = 0.0, kI = 0.0, kD = 0.0, kF = 0.0, tolerance = 0.0,
             MAX_POS = 0.0,
             MAX_EXTEND_POWER = 0.0, MAX_RETRACT_POWER = 0.0;
 
@@ -27,6 +27,7 @@ public class Extension implements Subsystem {
     LimitSwitch resetLimitSwitch;
 
     PIDController pidController;
+    double feedForward;
 
     public Extension() {
         extensionMotor = new BluMotorBuilder("extension motor")
@@ -37,6 +38,7 @@ public class Extension implements Subsystem {
         pidController = new PIDController(kP, kI, kD);
         pidController.setTolerance(tolerance);
         state = State.IDLE;
+        feedForward = 0.0;
     }
 
     @Override
@@ -44,6 +46,8 @@ public class Extension implements Subsystem {
         extensionMotor.init();
 
         state = State.IDLE;
+        pidController.reset();
+        feedForward = 0.0;
     }
 
     @Override
@@ -61,6 +65,7 @@ public class Extension implements Subsystem {
                     extensionMotor.setCurrentPosition(0);
                     pidController.setSetPoint(0);
                     pidController.reset();
+                    feedForward = 0;
                 }
                 break;
         }
@@ -73,7 +78,7 @@ public class Extension implements Subsystem {
                 break;
             case PID:
             case RETRACTING:
-                double power = Range.clip(pidController.calculate(), -MAX_RETRACT_POWER, MAX_EXTEND_POWER);
+                double power = Range.clip(pidController.calculate() + feedForward, -MAX_RETRACT_POWER, MAX_EXTEND_POWER) ;
                 extensionMotor.setPower(power);
                 break;
         }
@@ -83,6 +88,7 @@ public class Extension implements Subsystem {
 
     public void extendTo(double inches) {
         state = State.PID;
+        pidController.reset();
         pidController.setSetPoint(inches);
     }
 
@@ -95,9 +101,14 @@ public class Extension implements Subsystem {
         return extensionMotor.getCurrentPosition();
     }
 
+    public void setFeedForward(double pivotAngle) {
+        feedForward = Math.sin(pivotAngle) * kF;
+    }
+
     @Override
     public void telemetry(Telemetry telemetry) {
         telemetry.addData("Extension State", state);
+        telemetry.addData("Extension feed forward", feedForward);
         extensionMotor.telemetry();
         resetLimitSwitch.telemetry();
     }
