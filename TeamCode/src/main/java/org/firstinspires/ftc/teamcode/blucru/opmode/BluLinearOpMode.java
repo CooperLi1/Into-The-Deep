@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.Drivet
 public abstract class BluLinearOpMode extends LinearOpMode {
     public Alliance alliance;
     public Robot robot;
-    public Drivetrain drivetrain;
+    public Drivetrain dt;
 
     public StickyGamepad stickyG1;
     public StickyGamepad stickyG2;
@@ -100,6 +100,9 @@ public abstract class BluLinearOpMode extends LinearOpMode {
 
 
 //    public void addOuttake() {outtake = robot.addOuttake();}
+    public void addDrivetrain() {
+        dt = robot.addDrivetrain();
+    }
 
 
     /*
