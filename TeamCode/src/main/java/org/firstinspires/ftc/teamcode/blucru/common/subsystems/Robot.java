@@ -76,6 +76,10 @@ public class Robot {
             subsystem.telemetry(telemetry);
         }
     }
+    
+    public void addSubsystem(Subsystem subsystem) {
+        subsystems.add(subsystem);
+    }
 
     // call this after every op mode
     public static void kill() {
