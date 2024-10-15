@@ -20,6 +20,7 @@ public class MotionProfile {
     double v0, v1, v2, v3;
     double a0, a1, a2, a3;
     double distance;
+    double startTime;
 
     public MotionProfile(double xTarget, double xI, double vMax, double aMax) {
         this.xTarget = xTarget;
@@ -120,8 +121,9 @@ public class MotionProfile {
         }
     }
 
-    public double getInstantTargetPosition(double time) {
+    public double getInstantTargetPosition() {
         double instantTargetPos;
+        double time = (System.currentTimeMillis() - startTime) / 1000.0;
         double dt;
 
         if(time < t0) {
@@ -141,8 +143,9 @@ public class MotionProfile {
         return instantTargetPos;
     }
 
-    public double getInstantTargetVelocity(double time) {
+    public double getInstantTargetVelocity() {
         double instantTargetVel;
+        double time = (System.currentTimeMillis() - startTime) / 1000.0;
         double dt;
 
         if(time < t0) {
@@ -161,7 +164,13 @@ public class MotionProfile {
         return instantTargetVel;
     }
 
-    public boolean done(double time) {
+    public MotionProfile start() {
+        startTime = System.currentTimeMillis();
+        return this;
+    }
+
+    public boolean done() {
+        double time = (System.currentTimeMillis() - startTime) / 1000.0;
         return time > t0 + t1 + t2 + t3;
     }
 

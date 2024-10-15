@@ -24,7 +24,5 @@ dependencies {
     // stuff i added
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.14' // ftc dashboard
     implementation 'com.github.StateFactory-Dev:StateFactory:0.3.6' // state machine'
-
-
 }
 

@@ -66,12 +66,6 @@ public class FusedLocalizer {
     public boolean updateAprilTags(AprilTagProcessor tagProcessor) {
         if(System.currentTimeMillis() - lastTagUpdateMillis < TAG_UPDATE_DELAY) return false; // only update every TAG_UPDATE_DELAY ms
 
-        Pose2d currentPose = deadWheels.getPoseEstimate();
-        double heading = Angle.norm(currentPose.getHeading());
-        if(heading < Math.PI/2 || heading > 3*Math.PI/2) {
-            Log.v("FusedLocalizer", "Not updating tags, robot is facing the wrong way");
-            return false;
-        }
 
         ArrayList<AprilTagDetection> detections = tagProcessor.getDetections();
         if(detections.size() < 1) {
@@ -110,9 +104,8 @@ public class FusedLocalizer {
         }
 
         // calculate change from old odo pose to current pose
-        currentPose = deadWheels.getPoseEstimate();
+        Pose2d currentPose = deadWheels.getPoseEstimate();
 
-        // TODO: i removed the weight for testing, put it back
         Pose2d odoPoseError = tagPose.minus(poseAtFrame);
         Pose2d weightedCorrection = odoPoseError.times(weight);
 

@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Config
-@TeleOp(name = "motor test", group = "hardware test")
+@TeleOp(name = "Motor test", group = "hardware test")
 public class MotorTest extends LinearOpMode {
     public static String name = "hang";
     public static boolean reversed = false;
