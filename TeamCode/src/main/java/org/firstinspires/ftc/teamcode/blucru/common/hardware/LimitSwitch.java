@@ -18,4 +18,8 @@ public class LimitSwitch {
     public boolean isPressed() {
         return !digitalChannel.getState();
     }
+
+    public void telemetry() {
+        Globals.tele.addData(digitalChannel.getDeviceName(), isPressed());
+    }
 }

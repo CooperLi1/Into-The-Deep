@@ -33,14 +33,16 @@ public class Extension implements Subsystem {
                 .useEncoder()
                 .build();
         resetLimitSwitch = new LimitSwitch("reset switch");
+
+        pidController = new PIDController(kP, kI, kD);
+        pidController.setTolerance(tolerance);
+        state = State.IDLE;
     }
 
     @Override
     public void init() {
         extensionMotor.init();
 
-        pidController = new PIDController(kP, kI, kD);
-        pidController.setTolerance(tolerance);
         state = State.IDLE;
     }
 
@@ -57,6 +59,8 @@ public class Extension implements Subsystem {
                     state = State.IDLE;
                     extensionMotor.setPower(0);
                     extensionMotor.setCurrentPosition(0);
+                    pidController.setSetPoint(0);
+                    pidController.reset();
                 }
                 break;
         }
@@ -95,6 +99,6 @@ public class Extension implements Subsystem {
     public void telemetry(Telemetry telemetry) {
         telemetry.addData("Extension State", state);
         extensionMotor.telemetry();
-        telemetry.addData("Reset Switch", resetLimitSwitch.isPressed());
+        resetLimitSwitch.telemetry();
     }
 }
