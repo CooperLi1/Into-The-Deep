@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.intake.Intake;
 
 import java.util.ArrayList;
 
@@ -14,6 +15,7 @@ public class Robot {
 
     // all subsystems
     public Drivetrain dt;
+    public Intake intake;
 
     // list of all subsystems
     ArrayList<Subsystem> subsystems;
@@ -82,6 +84,12 @@ public class Robot {
         dt = new Drivetrain(hardwareMap, true);
         subsystems.add(dt);
         return dt;
+    }
+
+    public Intake addIntake() {
+        intake = new Intake();
+        subsystems.add(intake);
+        return intake;
     }
 
     // call this after every op mode
