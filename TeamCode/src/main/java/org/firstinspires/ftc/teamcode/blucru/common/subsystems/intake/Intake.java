@@ -59,6 +59,10 @@ public class Intake implements Subsystem {
                     state = State.FULL;
                 }
                 break;
+            case REVERSING:
+            case EMPTY:
+            case FULL:
+                break;
         }
     }
 
