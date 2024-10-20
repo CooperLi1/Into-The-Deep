@@ -31,15 +31,17 @@ public abstract class BluLinearOpMode extends LinearOpMode {
 
     public final void runOpMode() throws InterruptedException {
         Globals.runtime = new ElapsedTime();
+        Globals.hwMap = hardwareMap;
+        Globals.tele = telemetry;
         CommandScheduler.getInstance().cancelAll();
         alliance = Globals.alliance;
-        Globals.setVoltage(robot.getVoltage());
 
         stickyG1 = new StickyGamepad(gamepad1);
         stickyG2 = new StickyGamepad(gamepad2);
 
         robot = Robot.getInstance();
         robot.create(hardwareMap);
+        Globals.setVoltage(robot.getVoltage());
 
         initialize();
         robot.init();

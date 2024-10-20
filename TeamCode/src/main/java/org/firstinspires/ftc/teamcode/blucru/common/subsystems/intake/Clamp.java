@@ -6,17 +6,23 @@ import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 
 @Config
 public class Clamp extends BluServo {
-    public static double OPEN_POS = 0.5, CLOSED_POS = 0.5;
+    public static double HORIZ_POS = 0.77;
 
     public Clamp() {
         super("intake clamp");
     }
 
+    public void init() {
+        super.init();
+        release();
+        write();
+    }
+
     public void grab() {
-        setPosition(CLOSED_POS);
+        setPosition(HORIZ_POS - 0.17);
     }
 
     public void release() {
-        setPosition(OPEN_POS);
+        setPosition(HORIZ_POS - 0.47);
     }
 }

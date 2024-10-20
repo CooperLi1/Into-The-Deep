@@ -22,13 +22,13 @@ public class Intake implements Subsystem {
     State state;
     ArrayList<BluHardwareDevice> devices;
     BluCRServo wheel;
-    LimitSwitch limitSwitch;
+//    LimitSwitch limitSwitch;
     Clamp clamp;
 
     public Intake () {
         state = State.EMPTY;
-        wheel = new BluCRServo("wheel");
-        limitSwitch = new LimitSwitch("intake limit switch");
+        wheel = new BluCRServo("intake wheel");
+//        limitSwitch = new LimitSwitch("intake limit switch");
         clamp = new Clamp();
 
         devices = new ArrayList<>();
@@ -53,11 +53,11 @@ public class Intake implements Subsystem {
 
         switch(state) {
             case INTAKING:
-                if(limitSwitch.isPressed()) {
-                    // stop intaking
-                    // clamp down
-                    state = State.FULL;
-                }
+//                if(limitSwitch.isPressed()) {
+//                    // stop intaking
+//                    // clamp down
+//                    state = State.FULL;
+//                }
                 break;
             case REVERSING:
             case EMPTY:
