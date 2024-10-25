@@ -56,11 +56,7 @@ public class MotionProfile {
 
         if(vI < 0 && xTarget > xI + xDecel) {
             decel = true;
-        } else if(vI > 0 && xTarget < xI + xDecel) {
-            decel = true;
-        } else {
-            decel = false;
-        }
+        } else decel = vI > 0 && xTarget < xI + xDecel;
 
         // absolute delta x to stop
 

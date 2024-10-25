@@ -69,6 +69,10 @@ public class BluMotor extends DcMotorImpl implements BluHardwareDevice {
         offsetTicks = pos - encoderTicks;
     }
 
+    public int getCurrentPosition() {
+        return (int) (encoderTicks + offsetTicks);
+    }
+
     public void telemetry() {
         Telemetry tele = Globals.tele;
         tele.addData(name + " power", power);

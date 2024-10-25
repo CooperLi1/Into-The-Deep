@@ -12,7 +12,9 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
 
 @Config
 public class Pivot implements Subsystem {
-    public static double kP = 0.0, kI = 0.0, kD = 0.0, tolerance = 0.0,
+    public static double
+            kP = 0.0, kI = 0.0, kD = 0.0, tolerance = 0.0,
+            kFF_ANGLE = 0.0, kFF_EXTENSION = 0.0,
             MAX_POS = 0.0,
             MAX_UP_POWER = 0.0, MAX_DOWN_POWER = 0.0;
 
@@ -26,6 +28,7 @@ public class Pivot implements Subsystem {
     PIDController pidController;
     BluMotor pivotMotor;
     LimitSwitch resetLimitSwitch;
+    double feedForward;
 
     public Pivot() {
         pivotMotor = new BluMotorBuilder("pivot motor")
@@ -92,6 +95,10 @@ public class Pivot implements Subsystem {
 
     public double getCurrentPos() {
         return pivotMotor.getCurrentPosition();
+    }
+
+    public void setFeedForward(double extensionInches) {
+        feedForward = kFF_ANGLE * (pivotMotor.getCurrentPosition() + kFF_EXTENSION * extensionInches);
     }
 
     @Override
