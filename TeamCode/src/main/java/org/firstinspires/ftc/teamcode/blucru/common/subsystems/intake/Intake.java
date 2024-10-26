@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluHardwareDevice;
-import org.firstinspires.ftc.teamcode.blucru.common.hardware.LimitSwitch;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluCRServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
 
@@ -15,7 +14,7 @@ public class Intake implements Subsystem {
     enum State{
         INTAKING,
         REVERSING,
-        EMPTY,
+        RETRACTED_EMPTY,
         FULL
     }
 
@@ -24,16 +23,22 @@ public class Intake implements Subsystem {
     BluCRServo wheel;
 //    LimitSwitch limitSwitch;
     Clamp clamp;
+    Turret turret;
+    Wrist wrist;
 
     public Intake () {
-        state = State.EMPTY;
+        state = State.RETRACTED_EMPTY;
         wheel = new BluCRServo("intake wheel");
 //        limitSwitch = new LimitSwitch("intake limit switch");
         clamp = new Clamp();
+        turret = new Turret();
+        wrist = new Wrist();
 
         devices = new ArrayList<>();
         devices.add(wheel);
         devices.add(clamp);
+        devices.add(turret);
+        devices.add(wrist);
     }
 
     @Override
@@ -42,7 +47,7 @@ public class Intake implements Subsystem {
             device.init();
         }
 
-        state = State.EMPTY;
+        state = State.RETRACTED_EMPTY;
     }
 
     @Override
@@ -60,7 +65,10 @@ public class Intake implements Subsystem {
 //                }
                 break;
             case REVERSING:
-            case EMPTY:
+            case RETRACTED_EMPTY:
+                turret.vertical();
+                wrist.retract();
+                break;
             case FULL:
                 break;
         }
@@ -73,6 +81,12 @@ public class Intake implements Subsystem {
         }
     }
 
+    public void retract() {
+        state = State.RETRACTED_EMPTY;
+        turret.vertical();
+        wrist.retract();
+    }
+
     public void startIntaking() {
         state = State.INTAKING;
         wheel.setPower(1);
@@ -80,7 +94,7 @@ public class Intake implements Subsystem {
     }
 
     public void stopIntaking() {
-        state = State.EMPTY;
+        state = State.RETRACTED_EMPTY;
         wheel.setPower(0);
         clamp.grab();
     }

@@ -15,7 +15,6 @@ public class Clamp extends BluServo {
     public void init() {
         super.init();
         release();
-        write();
     }
 
     public void grab() {
