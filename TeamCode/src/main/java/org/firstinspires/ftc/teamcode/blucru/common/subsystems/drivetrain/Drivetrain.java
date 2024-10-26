@@ -58,8 +58,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     }
 
     public State drivetrainState;
-    boolean isTeleOp;
-    boolean intakingInAuto;
     public double drivePower = 0.5;
     double dt;
     public Pose2d pose;
@@ -87,8 +85,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     public Drivetrain(HardwareMap hardwareMap, boolean isTeleOp) {
         super(hardwareMap);
         this.drivetrainState = State.TELEOP;
-        this.isTeleOp = isTeleOp;
-        this.intakingInAuto = false;
         headingPID = new PIDController(HEADING_P, HEADING_I, HEADING_D);
         headingPID.setTolerance(HEADING_PID_TOLERANCE);
 
@@ -507,21 +503,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         }
     }
 
-//    public void startReadingDistance() {
-//        readingDistance = true;
-//        errors.clear();
-//    }
-//
-//    public void stopReadingDistance() {
-//        readingDistance = false;
-//    }
-
-    public void correctY(double correction) {
-        Pose2d newPose = new Pose2d(pose.getX(), pose.getY() + correction, pose.getHeading());
-        setPoseEstimate(newPose);
-        pose = newPose;
-    }
-
     public double getHeading() {return heading;}
 
     public boolean isStopped() {
@@ -536,7 +517,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
                 }); // idle the drivetrain before building a trajectory
     }
 
-    public void ftcDashDrawPose(Pose2d pose) {
+    public void ftcDashDrawPose() {
         TelemetryPacket packet = new TelemetryPacket();
         Canvas fieldOverlay = packet.fieldOverlay()
                         .setStroke("#1d38cf");
@@ -545,21 +526,14 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
-    public void ftcDashDrawCurrentPose() {
-        ftcDashDrawPose(pose);
-    }
-
     public void logPose() {
         Log.i("Drivetrain", "logged pose: " + pose);
     }
 
     public void telemetry(Telemetry telemetry) {
-        if(isTeleOp) {
-            telemetry.addData("drive power", drivePower);
-            telemetry.addData("field centric", fieldCentric);
-            telemetry.addData("target heading", targetHeading);
-        }
-
+        telemetry.addData("drive power", drivePower);
+        telemetry.addData("field centric", fieldCentric);
+        telemetry.addData("target heading", targetHeading);
         telemetry.addData("DRIVETRAIN STATE:", drivetrainState);
         telemetry.addData("heading", heading);
         telemetry.addData("pose x", pose.getX());
