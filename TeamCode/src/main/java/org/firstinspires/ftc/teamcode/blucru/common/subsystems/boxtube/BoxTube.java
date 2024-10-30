@@ -9,17 +9,20 @@ public class BoxTube implements Subsystem {
 
     @Override
     public void init() {
-
+        extension = new Extension();
+        pivot = new Pivot();
     }
 
     @Override
     public void read() {
-
+        extension.read();
+        pivot.read();
     }
 
     @Override
     public void write() {
-
+        extension.write();
+        pivot.write();
     }
 
     public void updateFeedForward() {
@@ -28,6 +31,7 @@ public class BoxTube implements Subsystem {
 
     @Override
     public void telemetry(Telemetry telemetry) {
-
+        extension.telemetry(telemetry);
+        pivot.telemetry(telemetry);
     }
 }

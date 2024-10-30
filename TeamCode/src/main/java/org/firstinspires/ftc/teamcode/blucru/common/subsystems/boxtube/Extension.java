@@ -12,8 +12,9 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
 
 @Config
 public class Extension implements Subsystem {
-    public static double kP = 0.0, kI = 0.0, kD = 0.0, kF = 0.0, tolerance = 0.0,
-            MAX_POS = 0.0,
+    public static double
+            kP = 0.0, kI = 0.0, kD = 0.0, kF = 0.0, tolerance = 0.0,
+            MIN_INCHES = 0.0, MAX_INCHES = 0.0,
             MAX_EXTEND_POWER = 0.0, MAX_RETRACT_POWER = 0.0;
 
     enum State {

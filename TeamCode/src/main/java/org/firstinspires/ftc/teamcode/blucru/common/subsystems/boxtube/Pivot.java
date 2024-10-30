@@ -15,7 +15,7 @@ public class Pivot implements Subsystem {
     public static double
             kP = 0.0, kI = 0.0, kD = 0.0, tolerance = 0.0,
             kFF_ANGLE = 0.0, kFF_EXTENSION = 0.0,
-            MAX_POS = 0.0,
+            MIN_RAD = 0.0, MAX_RAD = 0.0,
             MAX_UP_POWER = 0.0, MAX_DOWN_POWER = 0.0;
 
     enum State {
