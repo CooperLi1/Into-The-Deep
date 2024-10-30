@@ -6,9 +6,8 @@ import com.acmerobotics.roadrunner.util.Angle;
 
 @Config
 public class DriveKinematics {
-    public static double AXIAL_DECEL = 0.5,
-        LATERAL_DECEL = 0.5,
-        HEADING_DECEL = 0.5;
+    public static double
+        AXIAL_DECEL = 0.5, LATERAL_DECEL = 0.5, HEADING_DECEL = 8;
 
     public static double getHeadingTowardsPoint(Pose2d currentPose, Pose2d targetPose) {
         return Math.atan2(targetPose.getY() - currentPose.getY(),
