@@ -57,7 +57,7 @@ public class PIDPath implements Path {
         }
     }
 
-    public void breakPath() {
+    public void cancel() {
 //        Robot.getInstance().dt.idle();
         pathDone = true;
     }

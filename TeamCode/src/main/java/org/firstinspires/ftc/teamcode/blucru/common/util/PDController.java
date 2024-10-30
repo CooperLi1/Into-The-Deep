@@ -5,8 +5,8 @@ import com.arcrobotics.ftclib.controller.PIDController;
 
 public class PDController extends PIDController {
     Vector2d k;
-    public PDController(double kP, double kD) {
-        super(kP, 0, kD);
+    public PDController(double kP, double kI, double kD) {
+        super(kP, kI, kD);
         k = new Vector2d(kP, kD);
     }
 
