@@ -2,12 +2,13 @@ package org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.contr
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.util.Angle;
 
 @Config
 public class DriveKinematics {
-    public static double AXIAL_DECELERATION = 0.5,
-        LATERAL_DECELERATION = 0.5,
-        HEADING_DECELERATION = 0.5;
+    public static double AXIAL_DECEL = 0.5,
+        LATERAL_DECEL = 0.5,
+        HEADING_DECEL = 0.5;
 
     public static double getHeadingTowardsPoint(Pose2d currentPose, Pose2d targetPose) {
         return Math.atan2(targetPose.getY() - currentPose.getY(),
@@ -26,6 +27,17 @@ public class DriveKinematics {
     }
 
     public static Pose2d getStopPose(Pose2d currentPose, Pose2d currentVelocity) {
-        return new Pose2d();
+        Pose2d robotVel = new Pose2d(currentVelocity.vec().rotated(-currentPose.getHeading()), currentVelocity.getHeading());
+
+        // absolute value does the same as Math.signum because its squared, so the sign is preserved
+        double robotDeltaX = robotVel.getX() * Math.abs(robotVel.getX()) / (2 * AXIAL_DECEL);
+        double robotDeltaY = robotVel.getY() * Math.abs(robotVel.getY()) / (2 * LATERAL_DECEL);
+        double robotDeltaHeading = robotVel.getHeading() * Math.abs(robotVel.getHeading()) / (2 * HEADING_DECEL);
+
+        Pose2d robotDeltaPose = new Pose2d(robotDeltaX, robotDeltaY, robotDeltaHeading);
+
+        Pose2d globalDeltaPose = new Pose2d(robotDeltaPose.vec().rotated(currentPose.getHeading()), robotDeltaPose.getHeading());
+
+        return new Pose2d(currentPose.vec().plus(globalDeltaPose.vec()), Angle.norm(currentPose.getHeading() + globalDeltaPose.getHeading()));
     }
 }
