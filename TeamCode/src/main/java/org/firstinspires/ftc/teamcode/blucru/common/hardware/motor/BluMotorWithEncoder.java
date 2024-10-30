@@ -2,15 +2,14 @@ package org.firstinspires.ftc.teamcode.blucru.common.hardware.motor;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorImpl;
+import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluHardwareDevice;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
-public class BluMotorWithEncoder extends DcMotorImpl implements BluHardwareDevice {
-    public static double RING_BUFFER_MILLIS = 8;
-
+public class BluMotorWithEncoder extends DcMotorImplEx implements BluHardwareDevice {
     String name;
     double power = 0, lastPower = 0;
     double encoderTicks = 0, vel = 0;
@@ -52,13 +51,7 @@ public class BluMotorWithEncoder extends DcMotorImpl implements BluHardwareDevic
     public void read() {
         // only update if encoder is being used
         encoderTicks = super.getCurrentPosition();
-        if(System.currentTimeMillis() - lastVelTime > RING_BUFFER_MILLIS) {
-            double deltaPos = encoderTicks - lastPos;
-            double deltaTime = System.currentTimeMillis() - lastVelTime;
-            vel = deltaPos / (deltaTime / 1000.0);
-            lastPos = encoderTicks;
-            lastVelTime = System.currentTimeMillis();
-        }
+        vel = super.getVelocity();
     }
 
     public void write() {
@@ -75,6 +68,10 @@ public class BluMotorWithEncoder extends DcMotorImpl implements BluHardwareDevic
 
     public void setCurrentPosition(double pos) {
         offsetTicks = pos - encoderTicks;
+    }
+
+    public int getCurrentPosition() {
+        return (int) (encoderTicks + offsetTicks);
     }
 
     public void telemetry() {
