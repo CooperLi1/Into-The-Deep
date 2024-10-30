@@ -6,8 +6,6 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.LimitSwitch;
-import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotor;
-import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
 
 @Config
@@ -24,16 +22,14 @@ public class Extension implements Subsystem {
     }
 
     State state;
-    BluMotor extensionMotor;
+    ExtensionMotor extensionMotor;
     LimitSwitch resetLimitSwitch;
 
     PIDController pidController;
     double feedForward;
 
     public Extension() {
-        extensionMotor = new BluMotorBuilder("extension motor")
-                .useEncoder()
-                .build();
+        extensionMotor = new ExtensionMotor();
         resetLimitSwitch = new LimitSwitch("reset switch");
 
         pidController = new PIDController(kP, kI, kD);

@@ -6,7 +6,7 @@ public class PivotMotor extends BluMotorWithEncoder {
     static final double TICKS_PER_RAD = 680.435;
 
     public PivotMotor() {
-        super("pivot motor", Direction.FORWARD);
+        super("pivot", Direction.FORWARD);
     }
 
     public double getAngle() {
