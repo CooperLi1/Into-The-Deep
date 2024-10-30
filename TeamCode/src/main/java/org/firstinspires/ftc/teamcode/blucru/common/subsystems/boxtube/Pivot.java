@@ -6,8 +6,6 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.LimitSwitch;
-import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotor;
-import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
 
 @Config
@@ -26,14 +24,12 @@ public class Pivot implements Subsystem {
 
     State state;
     PIDController pidController;
-    BluMotor pivotMotor;
+    PivotMotor pivotMotor;
     LimitSwitch resetLimitSwitch;
     double feedForward;
 
     public Pivot() {
-        pivotMotor = new BluMotorBuilder("pivot motor")
-                .useEncoder()
-                .build();
+        pivotMotor = new PivotMotor();
         resetLimitSwitch = new LimitSwitch("reset switch");
 
         pidController = new PIDController(kP, kI, kD);
