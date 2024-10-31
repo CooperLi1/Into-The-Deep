@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.boxtube.Pivot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.intake.Intake;
 
@@ -16,6 +17,7 @@ public class Robot {
     // all subsystems
     public Drivetrain dt;
     public Intake intake;
+    public Pivot pivot;
 
     // list of all subsystems
     ArrayList<Subsystem> subsystems;
@@ -90,6 +92,12 @@ public class Robot {
         intake = new Intake();
         subsystems.add(intake);
         return intake;
+    }
+
+    public Pivot addPivot() {
+        pivot = new Pivot();
+        subsystems.add(pivot);
+        return pivot;
     }
 
     // call this after every op mode
