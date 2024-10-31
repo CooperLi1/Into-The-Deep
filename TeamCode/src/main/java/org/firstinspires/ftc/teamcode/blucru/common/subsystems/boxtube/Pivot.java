@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.LimitSwitch;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
-import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 @Config
 public class Pivot implements Subsystem {
@@ -17,13 +16,13 @@ public class Pivot implements Subsystem {
             MIN_RAD = 0.0, MAX_RAD = 0.0,
             MAX_UP_POWER = 0.8, MAX_DOWN_POWER = -0.7;
 
-    public enum State {
+    enum State {
         IDLE,
         PID,
         RETRACTING
     }
 
-    public State state;
+    State state;
     PIDController pidController;
     PivotMotor pivotMotor;
     LimitSwitch resetLimitSwitch;
@@ -70,12 +69,12 @@ public class Pivot implements Subsystem {
         switch (state) {
             case IDLE:
                 setPivotPower(0);
-                Globals.tele.addLine("PIVOT IDLE");
                 break;
             case PID:
             case RETRACTING:
                 double power = pidController.calculate(pivotMotor.getAngle());
-                setPivotPower(power);
+                updateFFNoExtension();
+                setPivotPower(power + feedForward);
                 break;
         }
 
@@ -92,12 +91,16 @@ public class Pivot implements Subsystem {
         pidController.setSetPoint(-0.1);
     }
 
-    public double getCurrentPos() {
-        return pivotMotor.getCurrentPosition();
+    public double getAngle() {
+        return pivotMotor.getAngle();
     }
 
-    public void setFeedForward(double extensionInches) {
-        feedForward = kFF_ANGLE * (pivotMotor.getCurrentPosition() + kFF_EXTENSION * extensionInches);
+    public void updateFFNoExtension() {
+        feedForward = kFF_ANGLE * Math.cos(pivotMotor.getAngle());
+    }
+
+    public void updateFF(double extensionInches) {
+        feedForward = Math.cos(pivotMotor.getAngle()) * (kFF_ANGLE + kFF_EXTENSION * extensionInches);
     }
 
     public void setTargetAngle(double angleRad) {
@@ -112,8 +115,15 @@ public class Pivot implements Subsystem {
         pivotMotor.setPower(Range.clip(power, MAX_DOWN_POWER, MAX_UP_POWER));
     }
 
+    public void idle() {
+        state = State.IDLE;
+        pivotMotor.setPower(0);
+    }
+
     @Override
     public void telemetry(Telemetry telemetry) {
+        telemetry.addData("Pivot State", state);
+
         pivotMotor.telemetry();
 //        resetLimitSwitch.telemetry();
     }

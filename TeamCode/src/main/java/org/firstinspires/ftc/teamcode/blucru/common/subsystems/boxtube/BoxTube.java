@@ -26,7 +26,7 @@ public class BoxTube implements Subsystem {
     }
 
     public void updateFeedForward() {
-        extension.setFeedForward(pivot.getCurrentPos());
+        extension.setFeedForward(pivot.getAngle());
     }
 
     @Override

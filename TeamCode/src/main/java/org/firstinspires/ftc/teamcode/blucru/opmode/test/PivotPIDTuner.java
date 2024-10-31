@@ -20,12 +20,11 @@ public class PivotPIDTuner extends BluLinearOpMode {
     @Override
     public void periodic() {
         pivot.updatePID(kP, kI, kD);
-        pivot.setTargetAngle(targetAngle);
 
         if(gamepad1.a) {
-            pivot.state = Pivot.State.PID;
+            pivot.pivotTo(targetAngle);
         } else {
-            pivot.state = Pivot.State.IDLE;
+            pivot.idle();
         }
     }
 
