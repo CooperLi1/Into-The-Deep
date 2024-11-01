@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
 public class Pivot implements Subsystem {
     public static double
             kP = 0.0, kI = 0.0, kD = 0.0, tolerance = 0.0,
-            kFF_ANGLE = 0.0, kFF_EXTENSION = 0.0,
+            kFF_COS = 0.0, kFF_EXTENSION = 0.0,
             MIN_RAD = 0.0, MAX_RAD = 0.0,
             MAX_UP_POWER = 0.8, MAX_DOWN_POWER = -0.7;
 
@@ -96,11 +96,11 @@ public class Pivot implements Subsystem {
     }
 
     public void updateFFNoExtension() {
-        feedForward = kFF_ANGLE * Math.cos(pivotMotor.getAngle());
+        feedForward = kFF_COS * Math.cos(pivotMotor.getAngle());
     }
 
     public void updateFF(double extensionInches) {
-        feedForward = Math.cos(pivotMotor.getAngle()) * (kFF_ANGLE + kFF_EXTENSION * extensionInches);
+        feedForward = Math.cos(pivotMotor.getAngle()) * (kFF_COS + kFF_EXTENSION * extensionInches);
     }
 
     public void setTargetAngle(double angleRad) {
