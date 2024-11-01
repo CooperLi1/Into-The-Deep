@@ -11,6 +11,10 @@ public class PDController extends PIDController {
     }
 
     public double calculate(double currentPos, double targetPos, double currentVelocity, double targetVelocity) {
+        if(targetVelocity == 0) {
+            return calculate(currentPos, targetVelocity);
+        }
+
         Vector2d pv = new Vector2d(currentPos, currentVelocity);
         Vector2d sp = new Vector2d(targetPos, targetVelocity);
         Vector2d error = sp.minus(pv);

@@ -176,20 +176,27 @@ public class MotionProfile {
     }
 
     public void telemetry(Telemetry telemetry) {
-        telemetry.addData("t0", t0);
-        telemetry.addData("t1", t1);
-        telemetry.addData("t2", t2);
-        telemetry.addData("t3", t3);
-        telemetry.addData("d0", d0);
-        telemetry.addData("d1", d1);
-        telemetry.addData("d2", d2);
-        telemetry.addData("d3", d3);
+        telemetry(telemetry, false);
+    }
+
+    public void telemetry(Telemetry telemetry, boolean debug) {
+        if(debug) {
+            telemetry.addData("t0", t0);
+            telemetry.addData("t1", t1);
+            telemetry.addData("t2", t2);
+            telemetry.addData("t3", t3);
+            telemetry.addData("d0", d0);
+            telemetry.addData("d1", d1);
+            telemetry.addData("d2", d2);
+            telemetry.addData("d3", d3);
+        }
+
         telemetry.addData("vI", vI);
         telemetry.addData("decel", decel);
         telemetry.addData("xDecel", xDecel);
         telemetry.addData("xAccel", xAccel);
         telemetry.addData("distance", distance);
-        telemetry.addData("target position", xTarget);
+        telemetry.addData("final position", xTarget);
         telemetry.addData("initial position", xI);
         telemetry.addData("max velocity", vMax);
         telemetry.addData("max acceleration", aMax);
