@@ -15,7 +15,7 @@ public class Pivot implements Subsystem {
             kP = 4.5, kI = 0.0, kD = 0.3, tolerance = 0.0,
             kFF_COS = 0.14, kFF_EXTENSION = 0.0,
             MIN_RAD = 0.0, MAX_RAD = 2,
-            MAX_UP_POWER = 0.8, MAX_DOWN_POWER = -0.7,
+            MAX_UP_POWER = 0.85, MAX_DOWN_POWER = -0.75,
             MAX_VELO = 1.0, MAX_ACCEL = 0.5;
 
     enum State {
@@ -117,11 +117,6 @@ public class Pivot implements Subsystem {
 
     public void updatePID() {
         pidController.setPID(kP, kI, kD);
-    }
-
-    public void updateConstraints(double MAX_VELO, double MAX_ACCEL) {
-        Pivot.MAX_VELO = MAX_VELO;
-        Pivot.MAX_ACCEL = MAX_ACCEL;
     }
 
     private void setPivotPower(double power){

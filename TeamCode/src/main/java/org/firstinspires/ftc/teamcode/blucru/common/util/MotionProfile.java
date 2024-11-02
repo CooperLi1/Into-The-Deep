@@ -117,7 +117,7 @@ public class MotionProfile {
         }
     }
 
-    public Vector2d updateInstantState() {
+    public Vector2d getInstantState() {
         double instantPos = getInstantTargetPosition();
         double instantVel = getInstantTargetVelocity();
 

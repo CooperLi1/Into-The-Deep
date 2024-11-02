@@ -27,7 +27,7 @@ public class PDController extends PIDController {
     }
 
     public double calculate(Vector2d pv, MotionProfile profile) {
-        Vector2d sp = profile.updateInstantState();
+        Vector2d sp = profile.getInstantState();
         return calculate(pv, sp);
     }
 }

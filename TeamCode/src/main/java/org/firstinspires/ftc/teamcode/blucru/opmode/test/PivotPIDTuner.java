@@ -9,8 +9,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmode.BluLinearOpMode;
 @Config
 @TeleOp(name = "Pivot PID Tuner", group = "test")
 public class PivotPIDTuner extends BluLinearOpMode {
-    public static double targetAngle = 0.0,
-            MAX_VELO = 1.0, MAX_ACCEL = 0.5;
+    public static double targetAngle = 0.0;
 
     @Override
     public void initialize() {
@@ -21,7 +20,6 @@ public class PivotPIDTuner extends BluLinearOpMode {
     @Override
     public void periodic() {
         pivot.updatePID();
-        pivot.updateConstraints(MAX_VELO, MAX_ACCEL);
 
         if(!gamepad1.a && !gamepad1.b) {
             pivot.idle();
