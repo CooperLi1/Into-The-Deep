@@ -17,8 +17,17 @@ public class PDController extends PIDController {
 
         Vector2d pv = new Vector2d(currentPos, currentVelocity);
         Vector2d sp = new Vector2d(targetPos, targetVelocity);
-        Vector2d error = sp.minus(pv);
 
+        return calculate(pv, sp);
+    }
+
+    public double calculate(Vector2d pv, Vector2d sp) {
+        Vector2d error = sp.minus(pv);
         return error.dot(k);
+    }
+
+    public double calculate(Vector2d pv, MotionProfile profile) {
+        Vector2d sp = profile.updateInstantState();
+        return calculate(pv, sp);
     }
 }

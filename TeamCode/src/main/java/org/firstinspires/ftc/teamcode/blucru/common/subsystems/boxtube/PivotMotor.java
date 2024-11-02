@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsystems.boxtube;
 
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithEncoder;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
@@ -17,6 +19,10 @@ public class PivotMotor extends BluMotorWithEncoder {
 
     public double getAngleVel() {
         return getVelocity() / TICKS_PER_RAD;
+    }
+
+    public Vector2d getState() {
+        return new Vector2d(getAngle(), getAngleVel());
     }
 
     @Override

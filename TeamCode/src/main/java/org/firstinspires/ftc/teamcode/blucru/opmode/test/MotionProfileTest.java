@@ -25,7 +25,7 @@ public class MotionProfileTest extends LinearOpMode {
 
         while(opModeIsActive()) {
             if(run != lastRun) {
-                profile = new MotionProfile(xF, xI, MAX_VEL, MAX_ACCEL);
+                profile = new MotionProfile(xF, xI, MAX_VEL, MAX_ACCEL).start();
             }
             profile.updateInstantState();
 
