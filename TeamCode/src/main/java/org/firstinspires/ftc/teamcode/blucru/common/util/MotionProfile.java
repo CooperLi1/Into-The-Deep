@@ -1,26 +1,25 @@
 package org.firstinspires.ftc.teamcode.blucru.common.util;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
 public class MotionProfile {
-    public double vMax;
-    public double aMax;
-    public double xTarget;
-    public double xI;
-    public double vI;
-    public double flip;
-    public boolean decel;
-    public double xDecel, xAccel;
-    public double tAccel;
+    double vMax, aMax, xTarget, xI;
+    double vI, flip;
+    boolean decel;
+    double xDecel, xAccel;
+    double tAccel;
     double t0, t1, t2, t3;
     double d0, d1, d2, d3;
     double v0, v1, v2, v3;
     double a0, a1, a2, a3;
     double distance;
     double startTime;
+
+    Vector2d instantState;
 
     public MotionProfile(double xTarget, double xI, double vMax, double aMax) {
         this.xTarget = xTarget;
@@ -35,6 +34,7 @@ public class MotionProfile {
         }
         decel = false;
         calculate();
+        instantState = new Vector2d(0,0);
     }
 
     public MotionProfile(double xTarget, double xI, double vI, double vMax, double aMax) {
@@ -117,6 +117,14 @@ public class MotionProfile {
         }
     }
 
+    public Vector2d updateInstantState() {
+        double instantPos = getInstantTargetPosition();
+        double instantVel = getInstantTargetVelocity();
+
+        instantState = new Vector2d(instantPos, instantVel);
+        return instantState;
+    }
+
     public double getInstantTargetPosition() {
         double instantTargetPos;
         double time = (System.currentTimeMillis() - startTime) / 1000.0;
@@ -189,13 +197,15 @@ public class MotionProfile {
             telemetry.addData("d1", d1);
             telemetry.addData("d2", d2);
             telemetry.addData("d3", d3);
+            telemetry.addData("xDecel", xDecel);
+            telemetry.addData("xAccel", xAccel);
+            telemetry.addData("decel", decel);
         }
 
-        telemetry.addData("vI", vI);
-        telemetry.addData("decel", decel);
-        telemetry.addData("xDecel", xDecel);
-        telemetry.addData("xAccel", xAccel);
+        telemetry.addData("Instant Pos", instantState.getX());
+        telemetry.addData("Instant Vel", instantState.getY());
         telemetry.addData("distance", distance);
+        telemetry.addData("vI", vI);
         telemetry.addData("final position", xTarget);
         telemetry.addData("initial position", xI);
         telemetry.addData("max velocity", vMax);
