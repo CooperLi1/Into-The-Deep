@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsystems.boxtube;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -22,7 +23,8 @@ public class Pivot implements Subsystem {
         IDLE,
         PID,
         MOTION_PROFILE,
-        RETRACTING
+        RETRACTING,
+        RESETTING
     }
 
     State state;
@@ -30,6 +32,7 @@ public class Pivot implements Subsystem {
     MotionProfile profile;
     PivotMotor pivotMotor;
     LimitSwitch resetLimitSwitch;
+    ElapsedTime resetTimer;
 
     public Pivot() {
         pivotMotor = new PivotMotor();
@@ -60,6 +63,8 @@ public class Pivot implements Subsystem {
             case RETRACTING:
 //                current = pivotMotor.getCurrent(CurrentUnit.AMPS);
                 break;
+            case RESETTING:
+                break;
         }
     }
 
@@ -67,6 +72,7 @@ public class Pivot implements Subsystem {
     public void write() {
         switch (state) {
             case IDLE:
+            case RESETTING:
                 setPivotPower(0);
                 break;
             case PID:
