@@ -33,11 +33,14 @@ public class Pivot implements Subsystem {
     PivotMotor pivotMotor;
     LimitSwitch resetLimitSwitch;
     ElapsedTime resetTimer;
+    boolean useExtension;
 
     public Pivot() {
         pivotMotor = new PivotMotor();
+        useExtension = false;
 //        resetLimitSwitch = new LimitSwitch("reset switch");
 
+        resetTimer = new ElapsedTime();
         profile = new MotionProfile(0,0,MAX_VELO, MAX_ACCEL);
         pidController = new PDController(kP, kI, kD);
         pidController.setTolerance(tolerance);
@@ -62,8 +65,16 @@ public class Pivot implements Subsystem {
                 break;
             case RETRACTING:
 //                current = pivotMotor.getCurrent(CurrentUnit.AMPS);
+                if(profile.done() && Math.abs(pivotMotor.getAngle()) < 0.1 && Math.abs(pivotMotor.getAngleVel()) < 0.3) {
+                    state = State.RESETTING;
+                    resetTimer.reset();
+                }
                 break;
             case RESETTING:
+                if(resetTimer.seconds() > 0.3) {
+                    pidTo(0.0);
+                    pivotMotor.resetEncoder();
+                }
                 break;
         }
     }
@@ -77,12 +88,12 @@ public class Pivot implements Subsystem {
                 break;
             case PID:
                 double pidPower = pidController.calculate(pivotMotor.getAngle());
-                setPowerFFRetracted(pidPower);
+                setPowerFF(pidPower);
                 break;
             case MOTION_PROFILE:
             case RETRACTING:
                 double profilePower = pidController.calculate(pivotMotor.getState(), profile);
-                setPowerFFRetracted(profilePower);
+                setPowerFF(profilePower);
                 break;
         }
 
@@ -95,7 +106,7 @@ public class Pivot implements Subsystem {
         profile = new MotionProfile(targetAngle, pivotMotor.getAngle(), MAX_VELO, MAX_ACCEL).start();
     }
 
-    public void pivotTo(double angle) {
+    public void pidTo(double angle) {
         state = State.PID;
         pidController.setSetPoint(angle);
     }
@@ -129,8 +140,14 @@ public class Pivot implements Subsystem {
         pivotMotor.setPower(Range.clip(power, MAX_DOWN_POWER, MAX_UP_POWER));
     }
 
-    private void setPowerFFRetracted(double power) {
-        setPivotPower(power + getFFNoExtension());
+    private void setPowerFF(double power) {
+        double ff;
+        if(useExtension) {
+            ff = getFFNoExtension();
+        } else {
+            ff = getFFNoExtension();
+        }
+        setPivotPower(power + ff);
     }
 
     public void idle() {

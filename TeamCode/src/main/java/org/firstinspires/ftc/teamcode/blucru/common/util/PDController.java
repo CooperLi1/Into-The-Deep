@@ -30,4 +30,10 @@ public class PDController extends PIDController {
         Vector2d sp = profile.getInstantState();
         return calculate(pv, sp);
     }
+
+    @Override
+    public void setPID(double kp, double ki, double kd) {
+        super.setPID(kp, ki, kd);
+        k = new Vector2d(kp, kd);
+    }
 }
