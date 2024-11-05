@@ -16,12 +16,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.control.DrivetrainTranslationPID;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.localization.FusedLocalizer;
 import org.firstinspires.ftc.teamcode.blucru.common.util.*;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
-//import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.localization.FusedLocalizer;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.util.DashboardUtil;
@@ -62,7 +60,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     public Pose2d accel;
     double lastTime;
 
-    public DrivetrainTranslationPID translationPID;
+    DrivetrainTranslationPID translationPID;
     public Pose2d targetPose;
     public FusedLocalizer fusedLocalizer;
 
@@ -146,17 +144,16 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     public void teleOpDrive(double x, double y, double rotate) {
         drivetrainState = State.TELEOP;
 
+        boolean driving = Math.abs(x) > 0.02 || Math.abs(y) > 0.02 || Math.abs(rotate) > 0.02;
         boolean turning = Math.abs(rotate) > 0.02;
         boolean wasJustTurning = Math.abs(lastRotateInput) > 0.02;
-        boolean movingTranslation = new Vector2d(x, y).norm() > 0.05;
-        boolean stopped = lastDriveVector.norm() < 0.05 && !movingTranslation && velocity.vec().norm() < 10.0;
 
-        if(turning) // if driver is turning, drive with turning normally
+        if(!driving)
+            setWeightedDrivePower(new Pose2d(0, 0, 0));
+        else if(turning) // if driver is turning, drive with turning normally
             driveScaled(x, y, rotate);
         else if(wasJustTurning) // if driver just stopped turning, drive to new target heading
             driveToHeadingScaled(x, y, calculateHeadingDecel());
-        else if(stopped) // if drivetrain is stopped, drive to current heading
-            driveToHeadingScaled(0, 0, heading);
         else // drive, turning to target heading
             driveToHeadingScaled(x, y, targetHeading);
 
@@ -228,41 +225,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         drivePIDClip(x, y, rotate);
     }
 
-    // apply slew rate limiter to drive vector
-    // i used it before, but too computationally intensive and slows robot too much i think
-    // also theres def a better way to do this, doing it before scaling to drive power makes it so much worse
-    private Vector2d slewRateLimit(Vector2d input, Vector2d lastDriveVector) {
-
-        // calculate the change between the last drive vector and the current drive vector
-        Vector2d driveVectorDelta = input.minus(lastDriveVector);
-
-        double limitedDriveVectorDeltaMagnitude;
-        boolean decelerating = input.norm() < lastDriveVector.norm();
-
-        if(decelerating) {
-            // if we are decelerating, limit the delta to the max decel delta
-            limitedDriveVectorDeltaMagnitude = Range.clip(driveVectorDelta.norm(), 0, (MAX_DECEL_DRIVE_DELTA * dt / 1000.0));
-        } else {
-            // otherwise, limit the delta to the max accel delta
-            limitedDriveVectorDeltaMagnitude = Range.clip(driveVectorDelta.norm(), 0, (MAX_ACCEL_DRIVE_DELTA * dt / 1000.0));
-        }
-
-        // scale the drive vector delta to the limited magnitude
-        Vector2d scaledDriveVectorDelta = driveVectorDelta.div(driveVectorDelta.norm()).times(limitedDriveVectorDeltaMagnitude);
-
-        Vector2d driveVector;
-        if(driveVectorDelta.norm() == 0) // catch divide by zero
-            driveVector = lastDriveVector;
-        else
-            // add the scaled change in drive vector to the last drive vector
-            driveVector = lastDriveVector.plus(scaledDriveVectorDelta);
-
-        // record the drive vector for the next loop
-        lastDriveVector = driveVector;
-
-        return driveVector; // return the new drive vector
-    }
-
     private Vector2d rotateDriveVector(Vector2d input) {
         if (fieldCentric) return input.rotated(-heading); // rotate input vector to match robot heading if field centric
         else return input.rotated(Math.toRadians(-90)); // rotate to match robot coordinates (x forward, y left)
@@ -330,10 +292,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         return Angle.norm(heading + Math.signum(velocity.getHeading()) * 0.5 * velocity.getHeading() * velocity.getHeading() / HEADING_DECELERATION);
     }
 
-    public double calculateHeadingDecel(double heading, double headingVel) {
-        return Angle.norm(heading + Math.signum(headingVel) * 0.5 * headingVel * headingVel / HEADING_DECELERATION);
-    }
-
     public void idle() {
         drivetrainState = State.TELEOP;
         lastDriveVector = new Vector2d(0,0);
@@ -350,8 +308,12 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         drivePower = Range.clip(power, 0.15, 1.0);
     }
 
-    public void setTurnPID(double p, double i, double d) {
-        headingPID.setPID(p, i, d);
+    public void updateTurnPID() {
+        headingPID.setPID(HEADING_P, HEADING_I, HEADING_D);
+    }
+
+    public void updateTranslationPID() {
+        translationPID.setPID(TRANSLATION_P, TRANSLATION_I, TRANSLATION_D);
     }
 
     private double getPIDRotate(double heading, double target) {
@@ -387,16 +349,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         }
         return heading;
     }
-
-//    public double getIMUHeading() {
-//        double heading = getExternalHeading();
-//        if(heading > Math.PI) {
-//            heading -= 2*Math.PI;
-//        } else if(heading < -Math.PI) {
-//            heading += 2*Math.PI;
-//        }
-//        return heading;
-//    }
 
     public void setTeleDrivePower(Gamepad gamepad) {
         boolean slow = gamepad.left_trigger > 0.1,

@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.contr
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.util.Angle;
+import com.qualcomm.robotcore.util.Range;
 
 @Config
 public class DriveKinematics {
@@ -39,4 +41,40 @@ public class DriveKinematics {
 
         return new Pose2d(currentPose.vec().plus(globalDeltaPose.vec()), Angle.norm(currentPose.getHeading() + globalDeltaPose.getHeading()));
     }
+
+
+    // apply slew rate limiter to drive vector
+    // i used it before, but too computationally intensive and slows robot too much i think
+    // also theres def a better way to do this, doing it before scaling to drive power makes it so much worse
+//    private Vector2d slewRateLimit(Vector2d input, Vector2d lastDriveVector) {
+//
+//        // calculate the change between the last drive vector and the current drive vector
+//        Vector2d driveVectorDelta = input.minus(lastDriveVector);
+//
+//        double limitedDriveVectorDeltaMagnitude;
+//        boolean decelerating = input.norm() < lastDriveVector.norm();
+//
+//        if(decelerating) {
+//            // if we are decelerating, limit the delta to the max decel delta
+//            limitedDriveVectorDeltaMagnitude = Range.clip(driveVectorDelta.norm(), 0, (MAX_DECEL_DRIVE_DELTA * dt / 1000.0));
+//        } else {
+//            // otherwise, limit the delta to the max accel delta
+//            limitedDriveVectorDeltaMagnitude = Range.clip(driveVectorDelta.norm(), 0, (MAX_ACCEL_DRIVE_DELTA * dt / 1000.0));
+//        }
+//
+//        // scale the drive vector delta to the limited magnitude
+//        Vector2d scaledDriveVectorDelta = driveVectorDelta.div(driveVectorDelta.norm()).times(limitedDriveVectorDeltaMagnitude);
+//
+//        Vector2d driveVector;
+//        if(driveVectorDelta.norm() == 0) // catch divide by zero
+//            driveVector = lastDriveVector;
+//        else
+//            // add the scaled change in drive vector to the last drive vector
+//            driveVector = lastDriveVector.plus(scaledDriveVectorDelta);
+//
+//        // record the drive vector for the next loop
+//        lastDriveVector = driveVector;
+//
+//        return driveVector; // return the new drive vector
+//    }
 }

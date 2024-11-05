@@ -9,8 +9,7 @@ public class DrivetrainTranslationPID {
     double kD;
     double tolerance;
 
-    PIDController xController = new PIDController(kP, kI, kD);
-    PIDController yController = new PIDController(kP, kI, kD);
+    PIDController xController, yController;
 
     Vector2d targetPosition;
 

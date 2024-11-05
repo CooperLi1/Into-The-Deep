@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.blucru.opmode.BluLinearOpMode;
 @Config
 @TeleOp(name="Drive To Position Test", group="test")
 public class DriveToPositionTest extends BluLinearOpMode {
-    public static double p = 0, i = 0, d = 0;
     public static double targetX = 0, targetY = 0, targetHeading = Math.toRadians(90);
     public static double power = 0.5;
 
@@ -25,7 +24,7 @@ public class DriveToPositionTest extends BluLinearOpMode {
     }
 
     public void periodic() {
-        dt.translationPID.setPID(p, i, d);
+        dt.updateTranslationPID();
         dt.drivePower = power;
 
         if(gamepad1.a) {
