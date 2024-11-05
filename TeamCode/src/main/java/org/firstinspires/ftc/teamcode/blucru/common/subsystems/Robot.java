@@ -83,7 +83,7 @@ public class Robot {
     }
 
     public Drivetrain addDrivetrain() {
-        dt = new Drivetrain(hardwareMap, true);
+        dt = new Drivetrain(hardwareMap);
         subsystems.add(dt);
         return dt;
     }

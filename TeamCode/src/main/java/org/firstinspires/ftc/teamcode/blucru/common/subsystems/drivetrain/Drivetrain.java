@@ -30,13 +30,12 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 @Config
 public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     public static double
-            MAX_ACCEL_DRIVE_DELTA = 6.5,
-            MAX_DECEL_DRIVE_DELTA = 20.0, // magnitude per second at power 1 for slew rate limiter
+            MAX_ACCEL_DRIVE_DELTA = 6.5, MAX_DECEL_DRIVE_DELTA = 20.0, // magnitude per second at power 1 for slew rate limiter
             MAX_ACCEL_PID_DELTA = 2, // magnitude per second at power 1 for PID
 
             HEADING_DECELERATION = 10, // radians per second squared, for calculating new target heading after turning
-            HEADING_P = 1.35, HEADING_I = 0, HEADING_D = 0.09, // PID constants for heading
-            HEADING_PID_TOLERANCE = 0.05, // radians
+            HEADING_P = 1.9, HEADING_I = 0, HEADING_D = 0.06, // PID constants for heading
+            HEADING_PID_TOLERANCE = 0.0, // radians
             HEADING_AT_POSE_TOLERANCE = 0.15,
 
             TRANSLATION_P = 0.18, TRANSLATION_I = 0, TRANSLATION_D = 0.029, TRANSLATION_PID_TOLERANCE = 0, // PID constants for translation
@@ -145,6 +144,8 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     }
 
     public void teleOpDrive(double x, double y, double rotate) {
+        drivetrainState = State.TELEOP;
+
         boolean turning = Math.abs(rotate) > 0.02;
         boolean wasJustTurning = Math.abs(lastRotateInput) > 0.02;
         boolean movingTranslation = new Vector2d(x, y).norm() > 0.05;
@@ -158,8 +159,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
             driveToHeadingScaled(0, 0, heading);
         else // drive, turning to target heading
             driveToHeadingScaled(x, y, targetHeading);
-
-        drivetrainState = State.TELEOP;
 
         // recording last turn input
         lastRotateInput = rotate;

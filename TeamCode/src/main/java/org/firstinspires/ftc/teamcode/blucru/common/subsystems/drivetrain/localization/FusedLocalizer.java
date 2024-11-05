@@ -28,7 +28,7 @@ public class FusedLocalizer {
     double lastTagUpdateMillis;
 
     IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP));
+            RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.UP));
 
     double headingOffset = 0;
     double lastImuUpdateMillis = 0;
@@ -40,7 +40,7 @@ public class FusedLocalizer {
         deadWheels = localizer;
         poseHistory = new PoseHistory();
 
-        imu = hardwareMap.get(IMU.class, "e hub imu");
+        imu = hardwareMap.get(IMU.class, "imu");
         lastFrameTime = System.nanoTime();
         lastTagUpdateMillis = System.currentTimeMillis();
     }
