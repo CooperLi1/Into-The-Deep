@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.StickyGamepad;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.boxtube.Pivot;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.intake.Intake;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Robot;
@@ -17,7 +19,9 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.Drivet
 public abstract class BluLinearOpMode extends LinearOpMode {
     public Alliance alliance;
     public Robot robot;
-    public Drivetrain drivetrain;
+    public Drivetrain dt;
+    public Intake intake;
+    public Pivot pivot;
 
     public StickyGamepad stickyG1;
     public StickyGamepad stickyG2;
@@ -29,15 +33,17 @@ public abstract class BluLinearOpMode extends LinearOpMode {
 
     public final void runOpMode() throws InterruptedException {
         Globals.runtime = new ElapsedTime();
+        Globals.hwMap = hardwareMap;
+        Globals.tele = telemetry;
         CommandScheduler.getInstance().cancelAll();
         alliance = Globals.alliance;
-        Globals.setVoltage(robot.getVoltage());
 
         stickyG1 = new StickyGamepad(gamepad1);
         stickyG2 = new StickyGamepad(gamepad2);
 
         robot = Robot.getInstance();
         robot.create(hardwareMap);
+        Globals.setVoltage(robot.getVoltage());
 
         initialize();
         robot.init();
@@ -98,14 +104,17 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public void telemetry() {}
     public void end() {}
 
+    public void addDrivetrain() {
+        dt = robot.addDrivetrain();
+    }
+    public void addIntake() {intake = robot.addIntake();}
+    public void addPivot() {pivot = robot.addPivot();}
 
-//    public void addOuttake() {outtake = robot.addOuttake();}
-
-
-    /*
-    this method is used to enable the FTC Dashboard telemetry and field overlay
-     */
-    public void enableFTCDashboard() {telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);}
+    // enable the FTC Dashboard telemetry and field overlay
+    public void enableFTCDashboard() {
+        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
+        Globals.tele = telemetry;
+    }
 
     public double currentSecs() {return runtime.seconds();}
 
