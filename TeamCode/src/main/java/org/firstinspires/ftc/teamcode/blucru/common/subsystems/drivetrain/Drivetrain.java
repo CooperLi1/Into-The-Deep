@@ -48,8 +48,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     State drivetrainState;
     public double drivePower = 0.5;
-    double dt;
-    double lastTime;
+    double dt, lastTime;
 
     DrivetrainTranslationPID translationPID;
     public Pose2d targetPose;
@@ -58,8 +57,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     PIDController headingPID;
     double targetHeading = 0;
     double heading; // estimated field heading (0 is facing right, positive is counterclockwise)
-    double imuHeading; // heading retrieved from IMU
-    double odoHeading; // heading retrieved from odometry
     public boolean fieldCentric; // whether the robot is field centric or robot centric
 
     Vector2d lastDriveVector; // drive vector in previous loop
@@ -161,7 +158,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     public void driveToHeadingScaled(double x, double y, double targetHeading) {
         this.targetHeading = targetHeading;
-        double rotate = getPIDRotate(heading, targetHeading);
+        double rotate = getHeadingPID(heading, targetHeading);
 
         Vector2d driveVector = rotateDriveVector(new Vector2d(x, y));
 
@@ -173,7 +170,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     public void driveToHeadingClip(double x, double y, double targetHeading) {
         this.targetHeading = targetHeading;
-        double rotate = getPIDRotate(heading, targetHeading);
+        double rotate = getHeadingPID(heading, targetHeading);
         
         driveClip(x, y, rotate);
     }
@@ -269,7 +266,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         translationPID.setPID(TRANSLATION_P, TRANSLATION_I, TRANSLATION_D);
     }
 
-    private double getPIDRotate(double heading, double target) {
+    private double getHeadingPID(double heading, double target) {
         if(heading - target < -Math.PI) heading += 2*Math.PI;
         else if(heading - target > Math.PI) heading -= 2 * Math.PI;
 
@@ -290,7 +287,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     private double getPIDRotateDecel(double targetHeading) {
         double headingDecel = calculateHeadingDecel();
-        return getPIDRotate(headingDecel, targetHeading);
+        return getHeadingPID(headingDecel, targetHeading);
     }
 
     public double getOdoHeading() {
@@ -423,7 +420,5 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         telemetry.addData("dt", dt);
         telemetry.addData("last drive vector", lastDriveVector);
         telemetry.addData("last drive vector magnitude", lastDriveVector.norm());
-        telemetry.addData("odo heading", odoHeading);
-        telemetry.addData("imu heading", imuHeading);
     }
 }
