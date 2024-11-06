@@ -121,8 +121,6 @@ public class SampleMecanumDrive extends MecanumDrive {
 //        List<Integer> lastTrackingEncVels = new ArrayList<>();
 
         // TODO: if desired, use setLocalizer() to change the localization method
-//        setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this));
-//        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
         setLocalizer(new PinpointFusedLocalizer());
 
 //        trajectorySequenceRunner = new TrajectorySequenceRunner(
@@ -293,16 +291,12 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-//        if (isTeleOp)
-//            return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        return 0;
+        return getLocalizer().getPoseEstimate().getHeading();
     }
 
     @Override
     public Double getExternalHeadingVelocity() {
-//        if(isTeleOp)
-//            return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
-        return (double) 0;
+        return getLocalizer().getPoseVelocity().getHeading();
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
