@@ -184,10 +184,6 @@ public class SampleMecanumDrive extends MecanumDrive {
         waitForIdle();
     }
 
-    public Pose2d getLastError() {
-        return trajectorySequenceRunner.getLastPoseError();
-    }
-
     public void updateTrajectory() {
         updatePoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
@@ -205,10 +201,6 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void stop() {
         setDriveSignal(new DriveSignal());
-    }
-
-    public void breakFollowing() {
-        trajectorySequenceRunner.breakFollowing();
     }
 
     public void setMode(DcMotor.RunMode runMode) {
