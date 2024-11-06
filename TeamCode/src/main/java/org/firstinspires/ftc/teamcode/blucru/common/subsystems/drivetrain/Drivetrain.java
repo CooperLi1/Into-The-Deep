@@ -53,6 +53,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     DrivetrainTranslationPID translationPID;
     public Pose2d targetPose;
+    public FusedLocalizer fusedLocalizer;
 
     PIDController headingPID;
     double targetHeading = 0;
@@ -71,6 +72,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         headingPID.setTolerance(HEADING_PID_TOLERANCE);
 
         translationPID = new DrivetrainTranslationPID(TRANSLATION_P, TRANSLATION_I, TRANSLATION_D, TRANSLATION_PID_TOLERANCE);
+        fusedLocalizer = new FusedLocalizer(getLocalizer(), hardwareMap);
         lastDriveVector = new Vector2d(0,0);
 
         fieldCentric = true;
@@ -85,6 +87,8 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         initializePose();
 
         this.drivetrainState = State.TELEOP;
+
+        fusedLocalizer.init();
     }
 
     public void read() {
