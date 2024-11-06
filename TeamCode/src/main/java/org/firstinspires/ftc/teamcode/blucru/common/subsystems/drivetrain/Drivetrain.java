@@ -56,7 +56,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     PIDController headingPID;
     double targetHeading = 0;
-    double heading; // estimated field heading (0 is facing right, positive is counterclockwise)
     public boolean fieldCentric; // whether the robot is field centric or robot centric
 
     Vector2d lastDriveVector; // drive vector in previous loop
@@ -79,8 +78,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     }
 
     public void init() {
-        heading = getOdoHeading();
-
         initializePose();
 
         this.drivetrainState = State.TELEOP;
@@ -158,7 +155,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     public void driveToHeadingScaled(double x, double y, double targetHeading) {
         this.targetHeading = targetHeading;
-        double rotate = getHeadingPID(heading, targetHeading);
+        double rotate = getHeadingPID(targetHeading);
 
         Vector2d driveVector = rotateDriveVector(new Vector2d(x, y));
 
@@ -170,13 +167,13 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     public void driveToHeadingClip(double x, double y, double targetHeading) {
         this.targetHeading = targetHeading;
-        double rotate = getHeadingPID(heading, targetHeading);
+        double rotate = getHeadingPID(targetHeading);
         
         driveClip(x, y, rotate);
     }
 
     private Vector2d rotateDriveVector(Vector2d input) {
-        if (fieldCentric) return input.rotated(-heading); // rotate input vector to match robot heading if field centric
+        if (fieldCentric) return input.rotated(-getExternalHeading()); // rotate input vector to match robot heading if field centric
         else return input.rotated(Math.toRadians(-90)); // rotate to match robot coordinates (x forward, y left)
     }
 
@@ -239,7 +236,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         // target heading = heading + 0.5 * velocity * velocity / HEADING_DECELERATION
         // use sign of velocity to determine to add or subtract
 
-        return Angle.norm(heading + Math.signum(getExternalHeadingVelocity()) * 0.5 * getExternalHeadingVelocity() * getExternalHeadingVelocity() / HEADING_DECELERATION);
+        return Angle.norm(getExternalHeading() + Math.signum(getExternalHeadingVelocity()) * 0.5 * getExternalHeadingVelocity() * getExternalHeadingVelocity() / HEADING_DECELERATION);
     }
 
     public void idle() {
@@ -266,7 +263,9 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         translationPID.setPID(TRANSLATION_P, TRANSLATION_I, TRANSLATION_D);
     }
 
-    private double getHeadingPID(double heading, double target) {
+    private double getHeadingPID(double target) {
+        double heading = getExternalHeading();
+
         if(heading - target < -Math.PI) heading += 2*Math.PI;
         else if(heading - target > Math.PI) heading -= 2 * Math.PI;
 
@@ -275,7 +274,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     }
 
     public double getAbsHeadingError(double target) {
-        double error = heading - target;
+        double error = getExternalHeading() - target;
         if(error < -Math.PI) error += 2*Math.PI;
         else if(error > Math.PI) error -= 2*Math.PI;
         return Math.abs(error);
@@ -283,11 +282,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     public double getAbsHeadingError() {
         return getAbsHeadingError(targetHeading);
-    }
-
-    private double getPIDRotateDecel(double targetHeading) {
-        double headingDecel = calculateHeadingDecel();
-        return getHeadingPID(headingDecel, targetHeading);
     }
 
     public double getOdoHeading() {
@@ -341,7 +335,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     public boolean isAtTargetPose() {
         boolean translationAtTarget = getPoseEstimate().vec().distTo(targetPose.vec()) < TRANSLATION_AT_POSE_TOLERANCE;
 
-        double headingError = heading - targetHeading;
+        double headingError = getExternalHeading() - targetHeading;
         if(headingError < -Math.PI) headingError += 2*Math.PI;
         else if(headingError > Math.PI) headingError -= 2 * Math.PI;
 
@@ -355,7 +349,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     public boolean inRange(Pose2d targetPose, double translationTolerance) {
         boolean translationAtTarget = getPoseEstimate().vec().distTo(targetPose.vec()) < translationTolerance;
 
-        double headingError = heading - targetPose.getHeading();
+        double headingError = getExternalHeading() - targetPose.getHeading();
         if(headingError < -Math.PI) headingError += 2*Math.PI;
         else if(headingError > Math.PI) headingError -= 2 * Math.PI;
 
@@ -380,7 +374,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         }
     }
 
-    public double getHeading() {return heading;}
+    public double getHeading() {return getExternalHeading();}
 
     public boolean isStopped() {
         return getPoseVelocity().vec().norm() < 0.1 && Math.abs(getExternalHeadingVelocity()) < 0.1;
@@ -411,7 +405,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         telemetry.addData("field centric", fieldCentric);
         telemetry.addData("target heading", targetHeading);
         telemetry.addData("DRIVETRAIN STATE:", drivetrainState);
-        telemetry.addData("heading", heading);
         telemetry.addData("pose", getPoseEstimate());
         telemetry.addData("velocity", getPoseVelocity());
     }
