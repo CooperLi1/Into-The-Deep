@@ -29,11 +29,10 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     public static double
             MAX_ACCEL_DRIVE_DELTA = 6.5, MAX_DECEL_DRIVE_DELTA = 20.0, // magnitude per second at power 1 for slew rate limiter
-            MAX_ACCEL_PID_DELTA = 2, // magnitude per second at power 1 for PID
+            MAX_ACCEL_PID_DELTA = 8, // magnitude per second at power 1 for PID
 
             HEADING_DECELERATION = 10, // radians per second squared, for calculating new target heading after turning
-            HEADING_P = 1.9, HEADING_I = 0, HEADING_D = 0.06, // PID constants for heading
-            HEADING_PID_TOLERANCE = 0.0, // radians
+            HEADING_P = 1.9, HEADING_I = 0, HEADING_D = 0.06, HEADING_PID_TOLERANCE = 0.0, // radians
             HEADING_AT_POSE_TOLERANCE = 0.15,
 
             TRANSLATION_P = 0.18, TRANSLATION_I = 0, TRANSLATION_D = 0.029, TRANSLATION_PID_TOLERANCE = 0, // PID constants for translation
@@ -178,13 +177,8 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         setWeightedDrivePower(staticDrivePose);
     }
 
-    public void drivePIDClip(double x, double y, double rotate) {
-        Vector2d driveVector = new Vector2d(x, y);
-
-        if (fieldCentric)
-            driveVector = driveVector.rotated(-heading); // rotate input vector to match robot heading if field centric
-        else
-            driveVector = driveVector.rotated(Math.toRadians(-90)); // rotate to match robot coordinates (x forward, y left)
+    public void driveClip(double x, double y, double rotate) {
+        Vector2d driveVector = rotateDriveVector(new Vector2d(x, y));
 
 //        driveVector = limitPIDDriveVector(driveVector);
 
@@ -206,23 +200,11 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         setWeightedDrivePower(staticDrivePose);
     }
 
-    public void driveToHeadingScaledDecel(double x, double y, double targetHeading) {
-        this.targetHeading = targetHeading;
-        double rotate = getPIDRotateDecel(targetHeading);
-
-        Vector2d driveVector = rotateDriveVector(new Vector2d(x, y));
-
-        Pose2d drivePose = new Pose2d(driveVector.times(drivePower), Range.clip(rotate, -drivePower, drivePower));
-        Pose2d staticDrivePose = processStaticFriction(drivePose);
-
-        setWeightedDrivePower(staticDrivePose);
-    }
-
     public void driveToHeadingClip(double x, double y, double targetHeading) {
         this.targetHeading = targetHeading;
         double rotate = getPIDRotate(heading, targetHeading);
         
-        drivePIDClip(x, y, rotate);
+        driveClip(x, y, rotate);
     }
 
     private Vector2d rotateDriveVector(Vector2d input) {
