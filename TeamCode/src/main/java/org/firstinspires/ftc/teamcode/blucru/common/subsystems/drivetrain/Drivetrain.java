@@ -17,18 +17,17 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.control.DrivetrainTranslationPID;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.control.DrivetrainTranslationPID;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.localization.FusedLocalizer;
 import org.firstinspires.ftc.teamcode.blucru.common.util.*;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.roadrunner.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.roadrunner.util.DashboardUtil;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @Config
 public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     public static double
-            MAX_ACCEL_DRIVE_DELTA = 6.5, MAX_DECEL_DRIVE_DELTA = 20.0, // magnitude per second at power 1 for slew rate limiter
             MAX_ACCEL_PID_DELTA = 8, // magnitude per second at power 1 for PID
 
             HEADING_DECELERATION = 10, // radians per second squared, for calculating new target heading after turning
@@ -48,26 +47,17 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         FOLLOWING_TRAJECTORY
     }
 
-    public State drivetrainState;
+    State drivetrainState;
     public double drivePower = 0.5;
-    double dt;
-    public Pose2d pose;
-    Pose2d lastPose;
-    public Pose2d velocity;
-    Pose2d lastVelocity;
-    double lastVelTime;
-    public Pose2d accel;
-    double lastTime;
+    double dt, lastTime;
+    Pose2d pose, lastPose, velocity, lastVelocity;
 
     DrivetrainTranslationPID translationPID;
     public Pose2d targetPose;
     public FusedLocalizer fusedLocalizer;
 
     PIDController headingPID;
-    double targetHeading = 0;
     double heading; // estimated field heading (0 is facing right, positive is counterclockwise)
-    double imuHeading; // heading retrieved from IMU
-    double odoHeading; // heading retrieved from odometry
     public boolean fieldCentric; // whether the robot is field centric or robot centric
 
     Vector2d lastDriveVector; // drive vector in previous loop
@@ -84,14 +74,8 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         pose = new Pose2d(0,0,0);
         lastPose = Globals.startPose;
         lastDriveVector = new Vector2d(0,0);
-        lastVelTime = System.currentTimeMillis();
         velocity = new Pose2d(0,0,0);
 
-        if(System.currentTimeMillis() - lastVelTime > 60) {
-            accel = velocity.minus(lastVelocity).div(System.currentTimeMillis()-lastVelTime/1000);
-            lastVelocity = velocity;
-            lastVelTime = System.currentTimeMillis();
-        }
 
         fieldCentric = true;
         targetPose = pose;
@@ -119,12 +103,10 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
         lastPose = pose;
         pose = this.getPoseEstimate();
-        heading = getOdoHeading();
+        heading = pose.getHeading();
         Pose2d botVelocity = getPoseVelocity();
         lastVelocity = velocity;
         velocity = new Pose2d(botVelocity.vec().rotated(heading), botVelocity.getHeading());
-        accel = velocity.minus(lastVelocity).div(dt/1000);
-//        velocity = getPoseVelocity();
     }
 
     public void write() {
@@ -154,7 +136,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         else if(wasJustTurning) // if driver just stopped turning, drive to new target heading
             driveToHeadingScaled(x, y, calculateHeadingDecel());
         else // drive, turning to target heading
-            driveToHeadingScaled(x, y, targetHeading);
+            driveToHeadingScaled(x, y);
 
         // recording last turn input
         lastRotateInput = rotate;
@@ -189,8 +171,19 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     }
 
     public void driveToHeadingScaled(double x, double y, double targetHeading) {
-        this.targetHeading = targetHeading;
-        double rotate = getPIDRotate(heading, targetHeading);
+        headingPID.setSetPoint(targetHeading);
+        double rotate = getPIDRotate(heading);
+
+        Vector2d driveVector = rotateDriveVector(new Vector2d(x, y));
+
+        Pose2d drivePose = new Pose2d(driveVector.times(drivePower), Range.clip(rotate, -drivePower, drivePower));
+        Pose2d staticDrivePose = processStaticFriction(drivePose);
+
+        setWeightedDrivePower(staticDrivePose);
+    }
+
+    public void driveToHeadingScaled(double x, double y) {
+        double rotate = getPIDRotate(heading);
 
         Vector2d driveVector = rotateDriveVector(new Vector2d(x, y));
 
@@ -201,8 +194,8 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     }
 
     public void driveToHeadingClip(double x, double y, double targetHeading) {
-        this.targetHeading = targetHeading;
-        double rotate = getPIDRotate(heading, targetHeading);
+        headingPID.setSetPoint(targetHeading);
+        double rotate = getPIDRotate(heading);
         
         driveClip(x, y, rotate);
     }
@@ -298,7 +291,9 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         translationPID.setPID(TRANSLATION_P, TRANSLATION_I, TRANSLATION_D);
     }
 
-    private double getPIDRotate(double heading, double target) {
+    private double getPIDRotate(double heading) {
+        double target = headingPID.getSetPoint();
+
         if(heading - target < -Math.PI) heading += 2*Math.PI;
         else if(heading - target > Math.PI) heading -= 2 * Math.PI;
 
@@ -311,15 +306,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         if(error < -Math.PI) error += 2*Math.PI;
         else if(error > Math.PI) error -= 2*Math.PI;
         return Math.abs(error);
-    }
-
-    public double getAbsHeadingError() {
-        return getAbsHeadingError(targetHeading);
-    }
-
-    private double getPIDRotateDecel(double targetHeading) {
-        double headingDecel = calculateHeadingDecel();
-        return getPIDRotate(headingDecel, targetHeading);
     }
 
     public double getOdoHeading() {
@@ -355,6 +341,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     public void resetHeading(double heading) {
         fusedLocalizer.resetHeading(heading);
+        this.heading = heading;
         Log.i("Drivetrain", "Reset heading to " + heading);
     }
 
@@ -368,13 +355,13 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     public void setTargetPose(Pose2d targetPose) {
         this.targetPose = targetPose;
-        this.targetHeading = targetPose.getHeading();
+        headingPID.setSetPoint(targetPose.getHeading());
     }
 
     public boolean isAtTargetPose() {
         boolean translationAtTarget = pose.vec().distTo(targetPose.vec()) < TRANSLATION_AT_POSE_TOLERANCE;
 
-        double headingError = heading - targetHeading;
+        double headingError = heading - headingPID.getSetPoint();
         if(headingError < -Math.PI) headingError += 2*Math.PI;
         else if(headingError > Math.PI) headingError -= 2 * Math.PI;
 
@@ -420,13 +407,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         else return velocity.vec().norm() < 0.1 && Math.abs(velocity.getHeading()) < 0.1;
     }
 
-    public TrajectorySequenceBuilder trajectorySequenceBuilder(Pose2d startPose) {
-        return super.trajectorySequenceBuilder(startPose)
-                .addTemporalMarker(() -> {
-                    idle();
-                }); // idle the drivetrain before building a trajectory
-    }
-
     public void ftcDashDrawPose() {
         TelemetryPacket packet = new TelemetryPacket();
         Canvas fieldOverlay = packet.fieldOverlay()
@@ -443,7 +423,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     public void telemetry(Telemetry telemetry) {
         telemetry.addData("drive power", drivePower);
         telemetry.addData("field centric", fieldCentric);
-        telemetry.addData("target heading", targetHeading);
+        telemetry.addData("target heading", headingPID.getSetPoint());
         telemetry.addData("DRIVETRAIN STATE:", drivetrainState);
         telemetry.addData("heading", heading);
         telemetry.addData("pose x", pose.getX());
@@ -451,15 +431,11 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         telemetry.addData("velocity x", velocity.getX());
         telemetry.addData("velocity y", velocity.getY());
         telemetry.addData("velocity heading", velocity.getHeading());
-        telemetry.addData("accel", accel);
     }
 
     public void testTelemetry(Telemetry telemetry) {
         telemetry.addData("dt", dt);
         telemetry.addData("last drive vector", lastDriveVector);
         telemetry.addData("last drive vector magnitude", lastDriveVector.norm());
-        telemetry.addData("odo heading", odoHeading);
-        telemetry.addData("imu heading", imuHeading);
-        telemetry.addData("accel magnitude", accel.vec().norm());
     }
 }
