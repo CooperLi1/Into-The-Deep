@@ -112,8 +112,10 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         boolean turning = Math.abs(rotate) > 0.02;
         boolean wasJustTurning = Math.abs(lastRotateInput) > 0.02;
 
-        if(!driving)
+        if(!driving) {
             setWeightedDrivePower(new Pose2d(0, 0, 0));
+            targetHeading = getExternalHeading();
+        }
         else if(turning) // if driver is turning, drive with turning normally
             driveScaled(x, y, rotate);
         else if(wasJustTurning) // if driver just stopped turning, drive to new target heading
@@ -191,9 +193,8 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     private Pose2d processStaticFriction(Pose2d drivePose) {
         Vector2d driveVector = drivePose.vec();
-//        boolean robotStopped = velocity.vec().norm() < STATIC_TRANSLATION_VELOCITY_TOLERANCE && Math.abs(velocity.getHeading()) < STATIC_HEADING_VELOCITY_TOLERANCE;
 
-//        if(robotStopped && driveVector.norm() != 0) {
+        if(driveVector.norm() != 0) {
             double angle = driveVector.angle();
             double staticMinMagnitude =
                     STRAFE_kStatic * FORWARD_kStatic
@@ -201,7 +202,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
                     Math.hypot(STRAFE_kStatic * Math.cos(angle), FORWARD_kStatic * Math.sin(angle));
             double newDriveMagnitude = staticMinMagnitude + (1-staticMinMagnitude) * driveVector.norm();
             return new Pose2d(driveVector.div(driveVector.norm()).times(newDriveMagnitude), drivePose.getHeading());
-//        } else return drivePose;
+        } else return drivePose;
     }
 
     private Pose2d scaleByDrivePower(Pose2d drivePose) {

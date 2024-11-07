@@ -84,14 +84,14 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: adjust the names of the following hardware devices to match your configuration
 
-        leftFront = new BluMotor("fl");
-        leftRear = new BluMotor("bl");
-        rightRear = new BluMotor("br");
-        rightFront = new BluMotor("fr");
-//        leftFront = hardwareMap.get(DcMotorEx.class, "fl");
-//        leftRear = hardwareMap.get(DcMotorEx.class, "bl");
-//        rightRear = hardwareMap.get(DcMotorEx.class, "br");
-//        rightFront = hardwareMap.get(DcMotorEx.class, "fr");
+//        leftFront = new BluMotor("fl", DcMotorSimple.Direction.REVERSE);
+//        leftRear = new BluMotor("bl", DcMotorSimple.Direction.REVERSE);
+//        rightRear = new BluMotor("br");
+//        rightFront = new BluMotor("fr");
+        leftFront = hardwareMap.get(DcMotor.class, "fl");
+        leftRear = hardwareMap.get(DcMotor.class, "bl");
+        rightRear = hardwareMap.get(DcMotor.class, "br");
+        rightFront = hardwareMap.get(DcMotor.class, "fr");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -107,9 +107,9 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-//        if (DriveConstants.RUN_USING_ENCODER && DriveConstants.MOTOR_VELO_PID != null) {
-//            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, DriveConstants.MOTOR_VELO_PID);
-//        }
+        if (DriveConstants.RUN_USING_ENCODER && DriveConstants.MOTOR_VELO_PID != null) {
+            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, DriveConstants.MOTOR_VELO_PID);
+        }
 
         // TODO: reverse any motors using DcMotor.setDirection()
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -117,16 +117,16 @@ public class SampleMecanumDrive extends MecanumDrive {
         rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
         rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
 
-//        List<Integer> lastTrackingEncPositions = new ArrayList<>();
-//        List<Integer> lastTrackingEncVels = new ArrayList<>();
+        List<Integer> lastTrackingEncPositions = new ArrayList<>();
+        List<Integer> lastTrackingEncVels = new ArrayList<>();
 
         // TODO: if desired, use setLocalizer() to change the localization method
         setLocalizer(new PinpointFusedLocalizer());
 
-//        trajectorySequenceRunner = new TrajectorySequenceRunner(
-//                follower, HEADING_PID, batteryVoltageSensor,
-//                lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
-//        );
+        trajectorySequenceRunner = new TrajectorySequenceRunner(
+                follower, HEADING_PID, batteryVoltageSensor,
+                lastEncPositions, lastEncVels, lastTrackingEncPositions, lastTrackingEncVels
+        );
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -215,16 +215,16 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
     }
 
-//    public void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {
-//        PIDFCoefficients compensatedCoefficients = new PIDFCoefficients(
-//                coefficients.p, coefficients.i, coefficients.d,
-//                coefficients.f * 12 / batteryVoltageSensor.getVoltage()
-//        );
-//
+    public void setPIDFCoefficients(DcMotor.RunMode runMode, PIDFCoefficients coefficients) {
+        PIDFCoefficients compensatedCoefficients = new PIDFCoefficients(
+                coefficients.p, coefficients.i, coefficients.d,
+                coefficients.f * 12 / batteryVoltageSensor.getVoltage()
+        );
+
 //        for (DcMotorEx motor : motors) {
 //            motor.setPIDFCoefficients(runMode, compensatedCoefficients);
 //        }
-//    }
+    }
 
     public void setWeightedDrivePower(Pose2d drivePower) {
         Pose2d vel = drivePower;
@@ -265,7 +265,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 //        lastEncVels.clear();
 //
 //        List<Double> wheelVelocities = new ArrayList<>();
-//        for (DcMotorEx motor : motors) {
+//        for (DcMotor motor : motors) {
 //            int vel = (int) motor.getVelocity();
 //            lastEncVels.add(vel);
 //            wheelVelocities.add(DriveConstants.encoderTicksToInches(vel));
