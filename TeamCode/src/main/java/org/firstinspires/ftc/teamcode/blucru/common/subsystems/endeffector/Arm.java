@@ -5,7 +5,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
 
 public class Arm extends BluServo implements Subsystem {
-    public static double PARALLEL_POS = 0.5;
+    public static double PARALLEL_POS = 0.5,
+        TICKS_PER_RAD = 0.25;
 
     public Arm() {
         super("arm");
@@ -25,6 +26,10 @@ public class Arm extends BluServo implements Subsystem {
 
     public void turnToBucket() {
         setPosition(PARALLEL_POS);
+    }
+
+    private double toTicks(double rad) {
+        return rad * TICKS_PER_RAD;
     }
 
     @Override
