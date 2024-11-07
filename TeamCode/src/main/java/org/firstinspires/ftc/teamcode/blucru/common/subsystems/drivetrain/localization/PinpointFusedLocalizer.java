@@ -19,7 +19,7 @@ public class PinpointFusedLocalizer implements Localizer {
                 GoBildaPinpointDriver.EncoderDirection.FORWARD,
                 GoBildaPinpointDriver.EncoderDirection.FORWARD);
         pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        pinpoint.setOffsets(0, 0);
+        pinpoint.setOffsets(-149.4375, 106.0);
 
         pinpoint.resetPosAndIMU();
         pinpoint.setPosition(startPose);
