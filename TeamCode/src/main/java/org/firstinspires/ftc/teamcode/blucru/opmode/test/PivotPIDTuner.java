@@ -14,6 +14,8 @@ public class PivotPIDTuner extends BluLinearOpMode {
     public void initialize() {
         enableFTCDashboard();
         addPivot();
+        addExtension();
+        pivot.useExtension(extension.getMotor());
     }
 
     @Override

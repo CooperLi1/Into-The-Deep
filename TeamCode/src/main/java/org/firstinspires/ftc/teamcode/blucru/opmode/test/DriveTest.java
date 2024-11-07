@@ -45,9 +45,4 @@ public class DriveTest extends BluLinearOpMode {
         }
         dt.ftcDashDrawPose();
     }
-
-    @Override
-    public void telemetry() {
-        dt.testTelemetry(telemetry);
-    }
 }

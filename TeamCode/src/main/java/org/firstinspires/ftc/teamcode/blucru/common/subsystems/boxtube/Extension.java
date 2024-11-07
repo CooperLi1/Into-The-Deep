@@ -110,6 +110,14 @@ public class Extension implements Subsystem {
         extensionMotor.setPower(0);
     }
 
+    public void usePivot(PivotMotor pivot) {
+        this.pivot = pivot;
+    }
+
+    public ExtensionMotor getMotor() {
+        return extensionMotor;
+    }
+
     @Override
     public void telemetry(Telemetry telemetry) {
         telemetry.addData("Extension State", state);

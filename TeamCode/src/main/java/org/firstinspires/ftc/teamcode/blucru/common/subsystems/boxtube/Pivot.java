@@ -160,6 +160,10 @@ public class Pivot implements Subsystem {
         this.extension = extension;
     }
 
+    public PivotMotor getMotor() {
+        return pivotMotor;
+    }
+
     @Override
     public void telemetry(Telemetry telemetry) {
         telemetry.addData("Pivot State", state);
