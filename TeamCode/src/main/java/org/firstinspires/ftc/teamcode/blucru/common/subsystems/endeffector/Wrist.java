@@ -1,27 +1,26 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 
+@Config
 public class Wrist extends BluServo {
-    public static double PARALLEL_POS = 0.5;
+    public static double VERTICAL_POS = 0.5;
 
     public Wrist() {
-        super("intake wrist");
+        super("wrist");
     }
 
-    public void parallel() {
-        setPosition(PARALLEL_POS);
+    public void vertical() {
+        setPosition(VERTICAL_POS);
     }
 
-    public void retract() {
-        setPosition(PARALLEL_POS);
+    public void horizontalCCW() {
+        setPosition(VERTICAL_POS);
     }
 
-    public void dropToIntake() {
-        setPosition(PARALLEL_POS);
-    }
-
-    public void dropToScoring() {
-        setPosition(PARALLEL_POS);
+    public void horizontalCW() {
+        setPosition(VERTICAL_POS);
     }
 }

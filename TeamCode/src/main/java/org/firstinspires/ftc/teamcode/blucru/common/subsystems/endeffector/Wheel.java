@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
 import java.util.ArrayList;
 
 @Config
-public class Intake implements Subsystem {
+public class Wheel implements Subsystem {
     enum State{
         INTAKING,
         REVERSING,
@@ -23,22 +23,22 @@ public class Intake implements Subsystem {
     BluCRServo wheel;
 //    LimitSwitch limitSwitch;
     Clamp clamp;
-    Turret turret;
     Wrist wrist;
+    Arm arm;
 
-    public Intake () {
+    public Wheel() {
         state = State.RETRACTED_EMPTY;
-        wheel = new BluCRServo("intake wheel");
+        wheel = new BluCRServo("wheel");
 //        limitSwitch = new LimitSwitch("intake limit switch");
         clamp = new Clamp();
-        turret = new Turret();
         wrist = new Wrist();
+        arm = new Arm();
 
         devices = new ArrayList<>();
         devices.add(wheel);
         devices.add(clamp);
-        devices.add(turret);
         devices.add(wrist);
+        devices.add(arm);
     }
 
     @Override
@@ -66,8 +66,8 @@ public class Intake implements Subsystem {
                 break;
             case REVERSING:
             case RETRACTED_EMPTY:
-                turret.vertical();
-                wrist.retract();
+                wrist.vertical();
+                arm.retract();
                 break;
             case FULL:
                 break;
@@ -83,8 +83,8 @@ public class Intake implements Subsystem {
 
     public void retract() {
         state = State.RETRACTED_EMPTY;
-        turret.vertical();
-        wrist.retract();
+        wrist.vertical();
+        arm.retract();
     }
 
     public void startIntaking() {

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.boxtube.Pivot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector.Intake;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector.Wheel;
 
 import java.util.ArrayList;
 
@@ -16,7 +16,7 @@ public class Robot {
 
     // all subsystems
     public Drivetrain dt;
-    public Intake intake;
+    public Wheel intake;
     public Pivot pivot;
 
     // list of all subsystems
@@ -88,8 +88,8 @@ public class Robot {
         return dt;
     }
 
-    public Intake addIntake() {
-        intake = new Intake();
+    public Wheel addIntake() {
+        intake = new Wheel();
         subsystems.add(intake);
         return intake;
     }

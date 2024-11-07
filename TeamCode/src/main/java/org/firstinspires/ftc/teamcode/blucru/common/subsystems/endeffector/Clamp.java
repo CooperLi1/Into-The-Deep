@@ -9,7 +9,7 @@ public class Clamp extends BluServo {
     public static double HORIZ_POS = 0.77;
 
     public Clamp() {
-        super("intake clamp");
+        super("clamp");
     }
 
     public void init() {
