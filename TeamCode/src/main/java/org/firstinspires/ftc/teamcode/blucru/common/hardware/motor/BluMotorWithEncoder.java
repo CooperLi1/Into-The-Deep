@@ -58,9 +58,8 @@ public class BluMotorWithEncoder extends DcMotorImplEx implements BluHardwareDev
         // only update if power has changed
         if(Math.abs(power - lastPower) > 0.005) {
             lastPower = power;
-            super.setPower(power);
+            super.setPower(Globals.correctPower(power));
         }
-
     }
 
     public void resetEncoder() {
