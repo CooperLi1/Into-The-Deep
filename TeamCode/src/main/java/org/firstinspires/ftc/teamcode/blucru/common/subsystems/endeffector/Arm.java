@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
 
-public class Arm extends BluServo {
+public class Arm extends BluServo implements Subsystem {
     public static double PARALLEL_POS = 0.5;
 
     public Arm() {
@@ -23,5 +25,10 @@ public class Arm extends BluServo {
 
     public void turnToBucket() {
         setPosition(PARALLEL_POS);
+    }
+
+    @Override
+    public void telemetry(Telemetry telemetry) {
+        super.telemetry();
     }
 }

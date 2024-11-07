@@ -11,7 +11,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.StickyGamepad;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.boxtube.Extension;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.boxtube.Pivot;
-import org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector.EndEffector;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector.Arm;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector.Clamp;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector.Wheel;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector.Wrist;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Robot;
@@ -21,8 +24,11 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public Alliance alliance;
     public Robot robot;
     public Drivetrain dt;
-    public EndEffector endEffector;
+    public Arm arm;
+    public Wrist wrist;
+    public Clamp clamp;
     public Pivot pivot;
+    public Wheel wheel;
     public Extension extension;
 
     public StickyGamepad stickyG1;
@@ -109,8 +115,11 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public void addDrivetrain() {
         dt = robot.addDrivetrain();
     }
-    public void addEndEffector() {endEffector = robot.addIntake();}
+    public void addArm() {arm = robot.addArm();}
+    public void addWrist() {wrist = robot.addWrist();}
+    public void addClamp() {clamp = robot.addClamp();}
     public void addPivot() {pivot = robot.addPivot();}
+    public void addWheel() {wheel = robot.addWheel();}
     public void addExtension() {extension = robot.addExtension();}
 
     // enable the FTC Dashboard telemetry and field overlay

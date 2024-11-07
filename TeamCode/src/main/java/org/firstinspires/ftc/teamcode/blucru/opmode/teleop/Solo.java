@@ -30,7 +30,7 @@ public class Solo extends BluLinearOpMode {
         addDrivetrain();
         addExtension();
         addPivot();
-        addEndEffector();
+        addArm();
     }
 
     @Override

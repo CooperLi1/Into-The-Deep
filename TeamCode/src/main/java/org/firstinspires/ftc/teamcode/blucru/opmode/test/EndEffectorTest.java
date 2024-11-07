@@ -8,21 +8,56 @@ import org.firstinspires.ftc.teamcode.blucru.opmode.BluLinearOpMode;
 public class EndEffectorTest extends BluLinearOpMode {
     @Override
     public void initialize() {
-        addEndEffector();
+        addArm();
+        addWrist();
+        addClamp();
+        addWheel();
     }
 
     @Override
     public void periodic() {
         if(stickyG1.left_bumper) {
-            endEffector.startIntaking();
+            startIntaking();
         }
 
         if(stickyG1.right_bumper) {
-            endEffector.spitOut();
+            spitOut();
         }
 
         if(stickyG1.a) {
-            endEffector.stopIntaking();
+            stopIntaking();
         }
+
+        if(stickyG1.b) {
+            retract();
+        }
+    }
+
+    public void startIntaking() {
+        arm.dropToGround();
+        wrist.uprightForward();
+        clamp.release();
+        wheel.intake();
+    }
+
+    public void stopIntaking() {
+        arm.dropToGround();
+        wrist.uprightForward();
+        clamp.grab();
+        wheel.stop();
+    }
+
+    public void spitOut() {
+        arm.dropToGround();
+        wrist.uprightForward();
+        clamp.release();
+        wheel.reverse();
+    }
+
+    public void retract() {
+        arm.retract();
+        wrist.horizontal();
+        clamp.grab();
+        wheel.stop();
     }
 }
