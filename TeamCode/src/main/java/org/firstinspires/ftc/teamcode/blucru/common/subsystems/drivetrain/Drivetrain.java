@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.control.DrivetrainTranslationPID;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.control.DrivePID;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.localization.FusedLocalizer;
 import org.firstinspires.ftc.teamcode.blucru.common.util.*;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
@@ -50,7 +50,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     public double drivePower = 0.5;
     double dt, lastTime;
 
-    DrivetrainTranslationPID translationPID;
+    DrivePID translationPID;
     public Pose2d targetPose;
     public FusedLocalizer fusedLocalizer;
 
@@ -67,7 +67,7 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         headingPID = new PIDController(HEADING_P, HEADING_I, HEADING_D);
         headingPID.setTolerance(HEADING_PID_TOLERANCE);
 
-        translationPID = new DrivetrainTranslationPID(TRANSLATION_P, TRANSLATION_I, TRANSLATION_D, TRANSLATION_PID_TOLERANCE);
+        translationPID = new DrivePID(TRANSLATION_P, TRANSLATION_I, TRANSLATION_D, TRANSLATION_PID_TOLERANCE);
         fusedLocalizer = new FusedLocalizer(getLocalizer(), hardwareMap);
         lastDriveVector = new Vector2d(0,0);
 
