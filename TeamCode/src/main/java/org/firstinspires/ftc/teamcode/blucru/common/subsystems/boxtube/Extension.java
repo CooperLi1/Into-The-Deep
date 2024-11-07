@@ -5,7 +5,6 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
 
 @Config
@@ -24,7 +23,8 @@ public class Extension implements Subsystem {
     State state;
     ExtensionMotor extensionMotor;
     PIDController pidController;
-    public boolean usePivot;
+
+    PivotMotor pivot;
 
     public Extension() {
         extensionMotor = new ExtensionMotor();
@@ -32,6 +32,8 @@ public class Extension implements Subsystem {
         pidController = new PIDController(kP, kI, kD);
         pidController.setTolerance(tolerance);
         state = State.IDLE;
+
+        pivot = null;
     }
 
     @Override
@@ -91,9 +93,10 @@ public class Extension implements Subsystem {
     }
 
     public void setPowerFeedForward(double power) {
-        double ff = 0;
+        double ff;
 
-        if(usePivot) ff = getFeedForward(Robot.getInstance().pivot.getAngle());
+        if(pivot == null) ff = 0;
+        else ff = getFeedForward(pivot.getAngle());
 
         extensionMotor.setPower(Range.clip(power + ff, MAX_RETRACT_POWER, MAX_EXTEND_POWER));
     }

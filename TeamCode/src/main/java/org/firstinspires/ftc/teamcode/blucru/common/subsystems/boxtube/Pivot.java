@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.LimitSwitch;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.util.MotionProfile;
 import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
@@ -33,12 +34,12 @@ public class Pivot implements Subsystem {
     PivotMotor pivotMotor;
     LimitSwitch resetLimitSwitch;
     ElapsedTime resetTimer;
-    public boolean useExtension;
+
+    ExtensionMotor extension;
 
     public Pivot() {
         pivotMotor = new PivotMotor();
-        useExtension = false;
-//        resetLimitSwitch = new LimitSwitch("reset switch");
+        extension = null;
 
         resetTimer = new ElapsedTime();
         profile = new MotionProfile(0,0,MAX_VELO, MAX_ACCEL);
@@ -64,16 +65,15 @@ public class Pivot implements Subsystem {
             case MOTION_PROFILE:
                 break;
             case RETRACTING:
-//                current = pivotMotor.getCurrent(CurrentUnit.AMPS);
                 if(profile.done() && Math.abs(pivotMotor.getAngle()) < 0.1 && Math.abs(pivotMotor.getAngleVel()) < 0.3) {
                     state = State.RESETTING;
                     resetTimer.reset();
                 }
                 break;
             case RESETTING:
-                if(resetTimer.seconds() > 0.3) {
-                    pidTo(0.0);
+                if(resetTimer.seconds() > 0.3 && getAngle() < 0.12) {
                     pivotMotor.resetEncoder();
+                    pidTo(0.0);
                 }
                 break;
         }
@@ -84,7 +84,7 @@ public class Pivot implements Subsystem {
         switch (state) {
             case IDLE:
             case RESETTING:
-                setPivotPower(0);
+                setPivotPower(-0.05);
                 break;
             case PID:
                 double pidPower = pidController.calculate(pivotMotor.getAngle());
@@ -113,7 +113,7 @@ public class Pivot implements Subsystem {
 
     public void retract() {
         state = State.RETRACTING;
-        pidController.setSetPoint(-0.1);
+        setMotionProfileTargetAngle(0.08);
     }
 
     public double getAngle() {
@@ -142,10 +142,11 @@ public class Pivot implements Subsystem {
 
     public void setPowerFF(double power) {
         double ff;
-        if(useExtension) {
+
+        if(extension == null) {
             ff = getFFNoExtension();
         } else {
-            ff = getFFNoExtension();
+            ff = getFF(extension.getDistance());
         }
         setPivotPower(power + ff);
     }
@@ -153,6 +154,10 @@ public class Pivot implements Subsystem {
     public void idle() {
         state = State.IDLE;
         pivotMotor.setPower(0);
+    }
+
+    public void useExtension(ExtensionMotor extension) {
+        this.extension = extension;
     }
 
     @Override
