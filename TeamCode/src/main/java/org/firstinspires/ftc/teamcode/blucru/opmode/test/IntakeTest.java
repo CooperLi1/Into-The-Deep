@@ -8,21 +8,21 @@ import org.firstinspires.ftc.teamcode.blucru.opmode.BluLinearOpMode;
 public class IntakeTest extends BluLinearOpMode {
     @Override
     public void initialize() {
-        addIntake();
+        addEndEffector();
     }
 
     @Override
     public void periodic() {
         if(stickyG1.left_bumper) {
-            intake.startIntaking();
+            endEffector.startIntaking();
         }
 
         if(stickyG1.right_bumper) {
-            intake.spitOut();
+            endEffector.spitOut();
         }
 
         if(stickyG1.a) {
-            intake.stopIntaking();
+            endEffector.stopIntaking();
         }
     }
 }

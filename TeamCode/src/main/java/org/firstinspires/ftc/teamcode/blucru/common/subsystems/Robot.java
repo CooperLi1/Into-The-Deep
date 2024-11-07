@@ -4,9 +4,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.boxtube.Extension;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.boxtube.Pivot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector.Wheel;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector.EndEffector;
 
 import java.util.ArrayList;
 
@@ -16,8 +17,9 @@ public class Robot {
 
     // all subsystems
     public Drivetrain dt;
-    public Wheel intake;
+    public EndEffector intake;
     public Pivot pivot;
+    public Extension extension;
 
     // list of all subsystems
     ArrayList<Subsystem> subsystems;
@@ -88,8 +90,8 @@ public class Robot {
         return dt;
     }
 
-    public Wheel addIntake() {
-        intake = new Wheel();
+    public EndEffector addIntake() {
+        intake = new EndEffector();
         subsystems.add(intake);
         return intake;
     }
@@ -98,6 +100,12 @@ public class Robot {
         pivot = new Pivot();
         subsystems.add(pivot);
         return pivot;
+    }
+
+    public Extension addExtension() {
+        extension = new Extension();
+        subsystems.add(extension);
+        return extension;
     }
 
     // call this after every op mode

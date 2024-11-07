@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
 import java.util.ArrayList;
 
 @Config
-public class Wheel implements Subsystem {
+public class EndEffector implements Subsystem {
     enum State{
         INTAKING,
         REVERSING,
@@ -26,7 +26,7 @@ public class Wheel implements Subsystem {
     Wrist wrist;
     Arm arm;
 
-    public Wheel() {
+    public EndEffector() {
         state = State.RETRACTED_EMPTY;
         wheel = new BluCRServo("wheel");
 //        limitSwitch = new LimitSwitch("intake limit switch");

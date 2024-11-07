@@ -33,7 +33,7 @@ public class Pivot implements Subsystem {
     PivotMotor pivotMotor;
     LimitSwitch resetLimitSwitch;
     ElapsedTime resetTimer;
-    boolean useExtension;
+    public boolean useExtension;
 
     public Pivot() {
         pivotMotor = new PivotMotor();
@@ -120,11 +120,11 @@ public class Pivot implements Subsystem {
         return pivotMotor.getAngle();
     }
 
-    public double getFFNoExtension() {
+    private double getFFNoExtension() {
         return kFF_COS * Math.cos(pivotMotor.getAngle());
     }
 
-    public double getFF(double extensionInches) {
+    private double getFF(double extensionInches) {
         return Math.cos(pivotMotor.getAngle()) * (kFF_COS + kFF_EXTENSION * extensionInches);
     }
 
@@ -140,7 +140,7 @@ public class Pivot implements Subsystem {
         pivotMotor.setPower(Range.clip(power, MAX_DOWN_POWER, MAX_UP_POWER));
     }
 
-    private void setPowerFF(double power) {
+    public void setPowerFF(double power) {
         double ff;
         if(useExtension) {
             ff = getFFNoExtension();

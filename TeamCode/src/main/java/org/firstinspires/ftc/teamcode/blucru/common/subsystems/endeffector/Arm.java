@@ -17,11 +17,11 @@ public class Arm extends BluServo {
         setPosition(PARALLEL_POS);
     }
 
-    public void dropToIntake() {
+    public void dropToGround() {
         setPosition(PARALLEL_POS);
     }
 
-    public void dropToScoring() {
+    public void turnToBucket() {
         setPosition(PARALLEL_POS);
     }
 }
