@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.commandbase.subsystem.endeffector;
+package org.firstinspires.ftc.teamcode.blucru.common.commandbase.subsystem.endeffector.arm;
 
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
