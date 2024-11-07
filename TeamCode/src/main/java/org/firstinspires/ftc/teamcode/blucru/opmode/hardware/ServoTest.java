@@ -28,8 +28,14 @@ public class ServoTest extends LinearOpMode {
                 continue;
             }
 
-            updateDirection();
-            updateController();
+            try {
+                updateDirection();
+                updateController();
+            } catch (Exception e) {
+                telemetry.addLine("ERROR updating direction and controller for" + name);
+                telemetry.update();
+                continue;
+            }
 
             if(gamepad1.a) {
                 controller.pwmEnable();

@@ -14,8 +14,8 @@ public class PivotPIDTuner extends BluLinearOpMode {
     public void initialize() {
         enableFTCDashboard();
         addPivot();
-        addExtension();
-        pivot.useExtension(extension.getMotor());
+//        addExtension();
+//        pivot.useExtension(extension.getMotor());
     }
 
     @Override
@@ -27,7 +27,7 @@ public class PivotPIDTuner extends BluLinearOpMode {
         } else if(gamepad1.a) {
             pivot.pidTo(targetAngle);
         } else if(stickyG1.b) {
-            pivot.setMotionProfileTargetAngle(targetAngle);
+//            pivot.setMotionProfileTargetAngle(targetAngle);
         }
     }
 
