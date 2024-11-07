@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsystems.intake;
+package org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector;
 
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 
