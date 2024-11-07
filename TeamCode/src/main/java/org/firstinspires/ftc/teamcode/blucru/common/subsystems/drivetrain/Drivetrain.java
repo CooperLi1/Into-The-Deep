@@ -48,16 +48,16 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
 
     State drivetrainState;
     public double drivePower = 0.5;
+    public boolean fieldCentric; // whether the robot is field centric or robot centric
+
     double dt, lastTime;
-    Pose2d pose, lastPose, velocity, lastVelocity;
+    Pose2d pose, lastPose, targetPose, velocity, lastVelocity;
 
     DrivetrainTranslationPID translationPID;
-    public Pose2d targetPose;
-    public FusedLocalizer fusedLocalizer;
+    FusedLocalizer fusedLocalizer;
 
     PIDController headingPID;
     double heading; // estimated field heading (0 is facing right, positive is counterclockwise)
-    public boolean fieldCentric; // whether the robot is field centric or robot centric
 
     Vector2d lastDriveVector; // drive vector in previous loop
     double lastRotateInput; // rotate input in previous loop
@@ -75,11 +75,9 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         lastDriveVector = new Vector2d(0,0);
         velocity = new Pose2d(0,0,0);
 
-
         fieldCentric = true;
         targetPose = pose;
         lastRotateInput = 0;
-        drivetrainState = State.TELEOP;
     }
 
     public void init() {
@@ -300,13 +298,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
         else return Range.clip(headingPID.calculate(heading, target), -1, 1);
     }
 
-    public double getAbsHeadingError(double target) {
-        double error = heading - target;
-        if(error < -Math.PI) error += 2*Math.PI;
-        else if(error > Math.PI) error -= 2*Math.PI;
-        return Math.abs(error);
-    }
-
     public double getOdoHeading() {
         double heading = getPoseEstimate().getHeading();
         if(heading > Math.PI) {
@@ -315,27 +306,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
             heading += 2*Math.PI;
         }
         return heading;
-    }
-
-    public void setTeleDrivePower(Gamepad gamepad) {
-        boolean slow = gamepad.left_trigger > 0.1,
-                fast = gamepad.right_trigger > 0.1;
-
-        double slowPower, fastPower, normalPower;
-//        switch (robotState) {
-//            case RETRACT: slowPower = 0.4; fastPower = 1.0; normalPower = 0.9; break;
-//            case INTAKING: slowPower = 0.3; fastPower = 1.0; normalPower = 0.85; break;
-//            case LIFTING: slowPower = 0.3; fastPower = 0.7; normalPower = 0.6; break;
-//            case OUTTAKING: slowPower = 0.25; fastPower = 0.8; normalPower = 0.5; break;
-//            case OUTTAKE_WRIST_RETRACTED: slowPower = 0.3; fastPower = 0.7; normalPower = 0.7; break;
-//            case RETRACTING: slowPower = 0.3; fastPower = 0.8; normalPower = 0.75; break;
-//            default: slowPower = 0.3; fastPower = 0.8; normalPower = 0.5; break;
-//        }
-//
-//        if(slow && fast) setDrivePower(normalPower);
-//        else if(slow) setDrivePower(slowPower);
-//        else if(fast) setDrivePower(fastPower);
-//        else setDrivePower(normalPower);
     }
 
     public void resetHeading(double heading) {
@@ -386,14 +356,6 @@ public class Drivetrain extends SampleMecanumDrive implements Subsystem {
     public void updateAprilTags(AprilTagProcessor processor) {
         try {
             fusedLocalizer.updateAprilTags(processor);
-        } catch (Exception e) {
-            return;
-        }
-    }
-
-    public void updateAprilTags() {
-        try {
-//            fusedLocalizer.updateAprilTags(Robot.getInstance().cvMaster.tagDetector);
         } catch (Exception e) {
             return;
         }
