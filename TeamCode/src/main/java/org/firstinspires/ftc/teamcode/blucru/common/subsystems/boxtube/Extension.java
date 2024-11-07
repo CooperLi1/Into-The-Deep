@@ -24,7 +24,7 @@ public class Extension implements Subsystem {
     ExtensionMotor extensionMotor;
     PIDController pidController;
 
-    PivotMotor pivot;
+    PivotMotor pivot; // reference to pivot motor for feedforward
 
     public Extension() {
         extensionMotor = new ExtensionMotor();

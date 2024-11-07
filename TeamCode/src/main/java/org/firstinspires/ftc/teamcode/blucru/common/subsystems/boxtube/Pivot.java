@@ -35,7 +35,7 @@ public class Pivot implements Subsystem {
     LimitSwitch resetLimitSwitch;
     ElapsedTime resetTimer;
 
-    ExtensionMotor extension;
+    ExtensionMotor extension; // reference to extension motor for feedforward
 
     public Pivot() {
         pivotMotor = new PivotMotor();
