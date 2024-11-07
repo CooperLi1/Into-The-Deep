@@ -21,15 +21,13 @@ public class EndEffector implements Subsystem {
     State state;
     ArrayList<BluHardwareDevice> devices;
     BluCRServo wheel;
-//    LimitSwitch limitSwitch;
-    Clamp clamp;
-    Wrist wrist;
-    Arm arm;
+    public Clamp clamp;
+    public Wrist wrist;
+    public Arm arm;
 
     public EndEffector() {
         state = State.RETRACTED_EMPTY;
         wheel = new BluCRServo("wheel");
-//        limitSwitch = new LimitSwitch("intake limit switch");
         clamp = new Clamp();
         wrist = new Wrist();
         arm = new Arm();
@@ -55,23 +53,6 @@ public class EndEffector implements Subsystem {
         for (BluHardwareDevice device : devices) {
             device.read();
         }
-
-        switch(state) {
-            case INTAKING:
-//                if(limitSwitch.isPressed()) {
-//                    // stop intaking
-//                    // clamp down
-//                    state = State.FULL;
-//                }
-                break;
-            case REVERSING:
-            case RETRACTED_EMPTY:
-                wrist.vertical();
-                arm.retract();
-                break;
-            case FULL:
-                break;
-        }
     }
 
     @Override
@@ -83,24 +64,32 @@ public class EndEffector implements Subsystem {
 
     public void retract() {
         state = State.RETRACTED_EMPTY;
-        wrist.vertical();
+        wrist.horizontal();
         arm.retract();
+        clamp.grab();
+    }
+
+    public void horizontalForIntake() {
+        wrist.uprightForward();
     }
 
     public void startIntaking() {
         state = State.INTAKING;
+        wrist.uprightForward();
         wheel.setPower(1);
         clamp.release();
     }
 
     public void stopIntaking() {
         state = State.RETRACTED_EMPTY;
+        wrist.uprightForward();
         wheel.setPower(0);
         clamp.grab();
     }
 
     public void spitOut() {
         state = State.REVERSING;
+        wrist.uprightForward();
         wheel.setPower(-1);
         clamp.release();
     }

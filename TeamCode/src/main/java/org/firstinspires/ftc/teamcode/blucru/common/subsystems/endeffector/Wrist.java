@@ -12,15 +12,15 @@ public class Wrist extends BluServo {
         super("wrist");
     }
 
-    public void vertical() {
+    public void uprightForward() {
         setPosition(VERTICAL_POS);
     }
 
-    public void horizontalCCW() {
+    public void horizontal() {
         setPosition(VERTICAL_POS);
     }
 
-    public void horizontalCW() {
+    public void uprightBackward() {
         setPosition(VERTICAL_POS);
     }
 }
