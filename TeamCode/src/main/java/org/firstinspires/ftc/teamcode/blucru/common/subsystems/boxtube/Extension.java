@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.blucru.common.util.MotionProfile;
 
 @Config
 public class Extension implements Subsystem {
@@ -17,17 +18,21 @@ public class Extension implements Subsystem {
     enum State {
         IDLE,
         PID,
-        RETRACTING
+        MOTION_PROFILE,
+        RETRACTING,
+        RESETTING
     }
-
+    
     State state;
     ExtensionMotor extensionMotor;
     PIDController pidController;
+    MotionProfile profile;
 
     PivotMotor pivot; // reference to pivot motor for feedforward
 
     public Extension() {
         extensionMotor = new ExtensionMotor();
+        profile = new MotionProfile(0, 0, 0, 0);
 
         pidController = new PIDController(kP, kI, kD);
         pidController.setTolerance(tolerance);
@@ -51,8 +56,12 @@ public class Extension implements Subsystem {
         switch(state) {
             case IDLE:
             case PID:
+            case MOTION_PROFILE:
                 break;
             case RETRACTING:
+
+                break;
+            case RESETTING:
                 break;
         }
     }
@@ -65,6 +74,8 @@ public class Extension implements Subsystem {
             case PID:
             case RETRACTING:
                 setPowerFeedForward(pidController.calculate());
+                break;
+            case RESETTING:
                 break;
         }
 
