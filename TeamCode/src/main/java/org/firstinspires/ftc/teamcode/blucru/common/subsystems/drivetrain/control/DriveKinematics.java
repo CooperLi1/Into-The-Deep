@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.util.Angle;
-import com.qualcomm.robotcore.util.Range;
 
 @Config
 public class DriveKinematics {
@@ -16,7 +15,9 @@ public class DriveKinematics {
                             targetPose.getX() - currentPose.getX());
     }
 
-    public static double getHeadingVelocityTowardsPoint(Pose2d currentPose, Pose2d targetPose, Pose2d currentVelocity) {
+    public static Vector2d getHeadingStateTowardsPoint(Pose2d currentPose, Pose2d targetPose, Pose2d currentVelocity) {
+        double heading = getHeadingTowardsPoint(currentPose, targetPose);
+
         double xDelta = targetPose.getX() - currentPose.getX();
         double yDelta = targetPose.getY() - currentPose.getY();
 
@@ -24,7 +25,9 @@ public class DriveKinematics {
         double yVel = currentVelocity.getY();
 
         // derive atan(yDelta / xDelta) with respect to time
-        return (xDelta * yVel - yDelta * xVel) / (xDelta * xDelta + yDelta * yDelta);
+        double headingVel = (xDelta * yVel - yDelta * xVel) / (xDelta * xDelta + yDelta * yDelta);
+
+        return new Vector2d(heading, headingVel);
     }
 
     public static Pose2d getStopPose(Pose2d currentPose, Pose2d currentVelocity) {
