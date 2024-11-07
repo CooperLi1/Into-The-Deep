@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.blucru.opmode.test;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor.*;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 import java.util.HashMap;
 
+@Disabled
 @Config
 @TeleOp(name = "Blu motor test", group = "test")
 public class BluMotorTest extends LinearOpMode {

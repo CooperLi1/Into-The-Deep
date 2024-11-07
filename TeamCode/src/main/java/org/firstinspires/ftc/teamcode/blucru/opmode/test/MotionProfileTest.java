@@ -3,11 +3,13 @@ package org.firstinspires.ftc.teamcode.blucru.opmode.test;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.blucru.common.util.MotionProfile;
 
+@Disabled
 @Config
 @TeleOp(name = "Motion Profile Test", group = "test")
 public class MotionProfileTest extends LinearOpMode {
