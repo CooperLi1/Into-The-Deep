@@ -26,6 +26,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotor;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.localization.PinpointFusedLocalizer;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.localization.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
@@ -44,7 +46,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(6, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(4, 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 1.9;
+    public static double LATERAL_MULTIPLIER = 1.65;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -57,8 +59,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
-    private List<DcMotorEx> motors;
+    private DcMotor leftFront, leftRear, rightRear, rightFront;
+    private List<DcMotor> motors;
 
 //    private IMU imu;
     private VoltageSensor batteryVoltageSensor;
@@ -82,14 +84,18 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: adjust the names of the following hardware devices to match your configuration
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "fl");
-        leftRear = hardwareMap.get(DcMotorEx.class, "bl");
-        rightRear = hardwareMap.get(DcMotorEx.class, "br");
-        rightFront = hardwareMap.get(DcMotorEx.class, "fr");
+//        leftFront = new BluMotor("fl", DcMotorSimple.Direction.REVERSE);
+//        leftRear = new BluMotor("bl", DcMotorSimple.Direction.REVERSE);
+//        rightRear = new BluMotor("br");
+//        rightFront = new BluMotor("fr");
+        leftFront = hardwareMap.get(DcMotor.class, "fl");
+        leftRear = hardwareMap.get(DcMotor.class, "bl");
+        rightRear = hardwareMap.get(DcMotor.class, "br");
+        rightFront = hardwareMap.get(DcMotor.class, "fr");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
-        for (DcMotorEx motor : motors) {
+        for (DcMotor motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
             motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
             motor.setMotorType(motorConfigurationType);
@@ -115,8 +121,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         List<Integer> lastTrackingEncVels = new ArrayList<>();
 
         // TODO: if desired, use setLocalizer() to change the localization method
-//        setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap, this));
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, lastTrackingEncPositions, lastTrackingEncVels));
+        setLocalizer(new PinpointFusedLocalizer());
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(
                 follower, HEADING_PID, batteryVoltageSensor,
@@ -179,10 +184,6 @@ public class SampleMecanumDrive extends MecanumDrive {
         waitForIdle();
     }
 
-    public Pose2d getLastError() {
-        return trajectorySequenceRunner.getLastPoseError();
-    }
-
     public void updateTrajectory() {
         updatePoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
@@ -202,18 +203,14 @@ public class SampleMecanumDrive extends MecanumDrive {
         setDriveSignal(new DriveSignal());
     }
 
-    public void breakFollowing() {
-        trajectorySequenceRunner.breakFollowing();
-    }
-
     public void setMode(DcMotor.RunMode runMode) {
-        for (DcMotorEx motor : motors) {
+        for (DcMotor motor : motors) {
             motor.setMode(runMode);
         }
     }
 
     public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
-        for (DcMotorEx motor : motors) {
+        for (DcMotor motor : motors) {
             motor.setZeroPowerBehavior(zeroPowerBehavior);
         }
     }
@@ -224,9 +221,9 @@ public class SampleMecanumDrive extends MecanumDrive {
                 coefficients.f * 12 / batteryVoltageSensor.getVoltage()
         );
 
-        for (DcMotorEx motor : motors) {
-            motor.setPIDFCoefficients(runMode, compensatedCoefficients);
-        }
+//        for (DcMotorEx motor : motors) {
+//            motor.setPIDFCoefficients(runMode, compensatedCoefficients);
+//        }
     }
 
     public void setWeightedDrivePower(Pose2d drivePower) {
@@ -255,7 +252,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         lastEncPositions.clear();
 
         List<Double> wheelPositions = new ArrayList<>();
-        for (DcMotorEx motor : motors) {
+        for (DcMotor motor : motors) {
             int position = motor.getCurrentPosition();
             lastEncPositions.add(position);
             wheelPositions.add(DriveConstants.encoderTicksToInches(position));
@@ -263,18 +260,18 @@ public class SampleMecanumDrive extends MecanumDrive {
         return wheelPositions;
     }
 
-    @Override
-    public List<Double> getWheelVelocities() {
-        lastEncVels.clear();
-
-        List<Double> wheelVelocities = new ArrayList<>();
-        for (DcMotorEx motor : motors) {
-            int vel = (int) motor.getVelocity();
-            lastEncVels.add(vel);
-            wheelVelocities.add(DriveConstants.encoderTicksToInches(vel));
-        }
-        return wheelVelocities;
-    }
+//    @Override
+//    public List<Double> getWheelVelocities() {
+//        lastEncVels.clear();
+//
+//        List<Double> wheelVelocities = new ArrayList<>();
+//        for (DcMotor motor : motors) {
+//            int vel = (int) motor.getVelocity();
+//            lastEncVels.add(vel);
+//            wheelVelocities.add(DriveConstants.encoderTicksToInches(vel));
+//        }
+//        return wheelVelocities;
+//    }
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
@@ -286,16 +283,12 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-//        if (isTeleOp)
-//            return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        return 0;
+        return getLocalizer().getPoseEstimate().getHeading();
     }
 
     @Override
     public Double getExternalHeadingVelocity() {
-//        if(isTeleOp)
-//            return (double) imu.getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate;
-        return (double) 0;
+        return getLocalizer().getPoseVelocity().getHeading();
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {

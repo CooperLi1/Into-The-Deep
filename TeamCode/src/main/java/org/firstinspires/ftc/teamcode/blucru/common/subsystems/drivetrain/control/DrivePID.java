@@ -1,26 +1,26 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.control;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.arcrobotics.ftclib.controller.PIDController;
 
-public class DrivetrainTranslationPID {
-    double kP;
-    double kI;
-    double kD;
+//@Config
+public class DrivePID {
+    public static double kPX = 0.18, kIX = 0, kDX = 0.029;
+    public static double kPY = 0.18, kIY = 0, kDY = 0.029;
+    public static double kPHeading = 1.9, kIHeading = 0, kDHeading = 0.06;
     double tolerance;
 
-    PIDController xController, yController;
+    PIDController xController, yController, headingController;
 
     Vector2d targetPosition;
 
-    public DrivetrainTranslationPID(double kP, double kI, double kD, double tolerance) {
-        this.kP = kP;
-        this.kI = kI;
-        this.kD = kD;
+    public DrivePID(double kP, double kI, double kD, double tolerance) {
         this.tolerance = tolerance;
 
-        xController = new PIDController(kP, kI, kD);
-        yController = new PIDController(kP, kI, kD);
+        xController = new PIDController(kPX, kIX, kDX);
+        yController = new PIDController(kPY, kIY, kDY);
+        headingController = new PIDController(kPHeading, kIHeading, kDHeading);
 
         targetPosition = new Vector2d(0, 0);
     }
@@ -41,9 +41,6 @@ public class DrivetrainTranslationPID {
     }
 
     public void setPID(double kP, double kI, double kD) {
-        this.kP = kP;
-        this.kI = kI;
-        this.kD = kD;
         xController.setP(kP);
         xController.setI(kI);
         xController.setD(kD);
@@ -53,19 +50,16 @@ public class DrivetrainTranslationPID {
     }
 
     public void setkP(double kP) {
-        this.kP = kP;
         xController.setP(kP);
         yController.setP(kP);
     }
 
     public void setkI(double kI) {
-        this.kI = kI;
         xController.setI(kI);
         yController.setI(kI);
     }
 
     public void setkD(double kD) {
-        this.kD = kD;
         xController.setD(kD);
         yController.setD(kD);
     }
