@@ -4,7 +4,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithE
 
 public class ExtensionMotor extends BluMotorWithEncoder {
     // TODO: calculate value
-    static final double TICKS_PER_INCH = 83.796; // 145.1 on the motor
+    static final double TICKS_PER_INCH = 27.932; // 145.1 on the motor
 
     public ExtensionMotor() {
         super("extension", Direction.FORWARD);

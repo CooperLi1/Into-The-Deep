@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 @Config
 public class Pivot implements Subsystem {
     public static double
-            kP = 4.5, kI = 0.0, kD = 0.3, tolerance = 0.0,
+            kP = 4.5, kI = 0.0, kD = 0.17, tolerance = 0.0,
             kFF_COS = 0.14, kFF_EXTENSION = 0.0,
             MIN_RAD = 0.0, MAX_RAD = 1.9,
             MAX_UP_POWER = 0.85, MAX_DOWN_POWER = -0.75,
@@ -23,7 +23,6 @@ public class Pivot implements Subsystem {
     enum State {
         IDLE,
         PID,
-//        MOTION_PROFILE,
         RETRACTING,
         RESETTING
     }
@@ -128,10 +127,6 @@ public class Pivot implements Subsystem {
 
     private double getFF(double extensionInches) {
         return Math.cos(pivotMotor.getAngle()) * (kFF_COS + kFF_EXTENSION * extensionInches);
-    }
-
-    public void setTargetAngle(double angleRad) {
-        pidController.setSetPoint(Range.clip(angleRad, MIN_RAD, MAX_RAD));
     }
 
     public void updatePID() {
