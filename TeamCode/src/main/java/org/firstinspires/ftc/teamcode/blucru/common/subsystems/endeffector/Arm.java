@@ -9,7 +9,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
 
 public class Arm extends BluServo implements Subsystem {
     public static double
-            PARALLEL_POS = 0.5,
+            PARALLEL_POS = 0.17,
+    // 90 degrees is from 0.17 to 0.45
             MAX_POS = 1.0, MIN_POS = 0.0,
             TICKS_PER_RAD = 1/4.45059;
 
@@ -30,6 +31,7 @@ public class Arm extends BluServo implements Subsystem {
     public void init() {
         super.init();
         globalAngle = Math.PI/2;
+        retract();
     }
 
     @Override
@@ -61,15 +63,15 @@ public class Arm extends BluServo implements Subsystem {
     }
 
     public void retract() {
-        setPosition(PARALLEL_POS + 0.0);
+        setPosition(PARALLEL_POS + 0.3);
     }
 
     public void dropToGround() {
-        setPosition(PARALLEL_POS + 0.0);
+        setPosition(PARALLEL_POS -0.09);
     }
 
     public void turnToBucket() {
-        setPosition(PARALLEL_POS + 0.0);
+        setPosition(PARALLEL_POS + 0.3);
     }
 
     private double toTicks(double rad) {
