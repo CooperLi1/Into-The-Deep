@@ -10,9 +10,9 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsystems.BluSubsystem;
 
 public class Arm extends BluServo implements BluSubsystem, Subsystem {
     public static double
-            PARALLEL_POS = 0.17,
+            PARALLEL_POS = 0.6,
     // 90 degrees is from 0.17 to 0.45
-            MAX_POS = 0.5, MIN_POS = 0.0,
+            MAX_POS = 0.95, MIN_POS = 0.25,
             TICKS_PER_RAD = 0.1782;
 
     enum State{
@@ -38,7 +38,7 @@ public class Arm extends BluServo implements BluSubsystem, Subsystem {
     @Override
     public void write() {
         if(state == State.IVK) {
-            super.setPosition(getAngle(globalAngle));
+            super.setPosition(Range.clip(getTicksFromGlobalAngle(globalAngle), MIN_POS, MAX_POS));
         }
 
         super.write();
@@ -49,14 +49,13 @@ public class Arm extends BluServo implements BluSubsystem, Subsystem {
         this.globalAngle = globalAngle;
     }
 
-    public double getAngle(double globalAngle) {
-        double rawTicks = toTicks(globalAngle - Robot.getInstance().pivot.getAngle() + PARALLEL_POS);
-        return Range.clip(rawTicks, MIN_POS, MAX_POS);
+    public double getTicksFromGlobalAngle(double globalAngle) {
+        return toTicks(globalAngle - Robot.getInstance().pivot.getAngle()) + PARALLEL_POS;
     }
 
     public void setPosition(double position) {
         state = State.SERVO;
-        super.setPosition(position);
+        super.setPosition(Range.clip(position, MIN_POS, MAX_POS));
     }
 
     public void preIntake() {

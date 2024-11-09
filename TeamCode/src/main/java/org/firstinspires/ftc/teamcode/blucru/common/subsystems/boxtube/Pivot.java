@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 public class Pivot implements BluSubsystem, Subsystem {
     public static double
             kP = 4.5, kI = 0.0, kD = 0.3, tolerance = 0.0,
-            kFF_COS = 0.13, kFF_EXTENSION = 0.011,
+            kFF_COS = 0.11, kFF_EXTENSION = 0.011,
             MIN_RAD = 0.0, MAX_RAD = 1.9,
             MAX_UP_POWER = 1.0, MAX_DOWN_POWER = -0.75,
             MAX_VELO = 1.0, MAX_ACCEL = 0.5;
@@ -63,7 +63,7 @@ public class Pivot implements BluSubsystem, Subsystem {
             case PID:
                 break;
             case RETRACTING:
-                if(profile.done() && Math.abs(pivotMotor.getAngle()) < 0.1 && Math.abs(pivotMotor.getAngleVel()) < 0.3) {
+                if(Math.abs(pivotMotor.getAngle()) < 0.12 && Math.abs(pivotMotor.getAngleVel()) < 0.3) {
                     state = State.RESETTING;
                     resetTimer.reset();
                 }
@@ -83,7 +83,7 @@ public class Pivot implements BluSubsystem, Subsystem {
             case IDLE:
                 break;
             case RESETTING:
-                setPivotPower(-0.05);
+                setPivotPower(0);
                 break;
             case PID:
                 double pidPower = pidController.calculate(pivotMotor.getAngle());
@@ -104,8 +104,8 @@ public class Pivot implements BluSubsystem, Subsystem {
     }
 
     public void retract() {
-        state = State.RETRACTING;
         pidTo(0.05);
+        state = State.RETRACTING;
     }
 
     public double getAngle() {

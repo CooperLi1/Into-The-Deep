@@ -4,10 +4,10 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Robot;
 
-public class ArmHorizontalCommand extends InstantCommand {
-    public ArmHorizontalCommand() {
+public class ArmGlobalAngleCommand extends InstantCommand {
+    public ArmGlobalAngleCommand (double globalAngle) {
         super(
-                () -> Robot.getInstance().arm.preIntake()
+                () -> Robot.getInstance().arm.setGlobalAngle(globalAngle)
         );
 
         addRequirements(Robot.getInstance().arm);

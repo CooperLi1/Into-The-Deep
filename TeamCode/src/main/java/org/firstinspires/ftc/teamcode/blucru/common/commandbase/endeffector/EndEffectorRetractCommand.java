@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.arm.
 import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.clamp.ClampGrabCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.wheel.WheelStopCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.wrist.WristHorizontalCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.wrist.WristUprightForwardCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Robot;
 
 public class EndEffectorRetractCommand extends SequentialCommandGroup {
@@ -15,8 +16,7 @@ public class EndEffectorRetractCommand extends SequentialCommandGroup {
                 new ClampGrabCommand(),
                 new ArmRetractCommand(),
                 new WheelStopCommand(),
-                new WaitCommand(300),
-                new WristHorizontalCommand()
+                new WristUprightForwardCommand()
         );
     }
 }

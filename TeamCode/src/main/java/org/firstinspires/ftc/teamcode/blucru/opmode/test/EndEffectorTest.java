@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.blucru.opmode.BluLinearOpMode;
 
-@TeleOp(name = "Intake Test", group = "test")
+@TeleOp(name = "End effector Test", group = "test")
 public class EndEffectorTest extends BluLinearOpMode {
     @Override
     public void initialize() {
