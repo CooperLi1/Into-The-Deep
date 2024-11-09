@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.opmode.teleop;
 
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 
@@ -13,7 +14,7 @@ public class Duo extends BluLinearOpMode {
         EXTENDED_OVER_INTAKE,
         INTAKING,
         RETRACTING_FROM_INTAKE,
-        LIFTING_TO_BASKET,
+        LIFTING_TO_BASKET_BACK,
         AT_BASKET,
         SCORING_BASKET,
         LIFTING_TO_SPECIMEN,
@@ -26,6 +27,7 @@ public class Duo extends BluLinearOpMode {
 
     State state;
     StateMachine sm;
+    boolean nextHigh = false;
 
     @Override
     public void initialize() {
@@ -51,19 +53,23 @@ public class Duo extends BluLinearOpMode {
                     clamp.release();
                     arm.preIntake();
                 })
-                .transition(() -> gamepad2.dpad_right && !gamepad2.x, State.LIFTING_TO_BASKET, () -> {
+                .transition(() -> gamepad2.dpad_right && !gamepad2.x, State.LIFTING_TO_BASKET_BACK, () -> {
+                    nextHigh = true;
                     pivot.pidTo(1.6);
                     wrist.uprightBackward();
                 })
-                .transition(() -> gamepad2.dpad_down && !gamepad2.x, State.LIFTING_TO_BASKET, () -> {
+                .transition(() -> gamepad2.dpad_down && !gamepad2.x, State.LIFTING_TO_BASKET_BACK, () -> {
+                    nextHigh = false;
                     pivot.pidTo(1.6);
                     wrist.uprightBackward();
                 })
                 .transition(() -> gamepad2.dpad_left && !gamepad2.x, State.LIFTING_TO_SPECIMEN, () -> {
+                    nextHigh = false;
                     pivot.pidTo(1.6);
                     wrist.horizontal();
                 })
                 .transition(() -> gamepad2.dpad_up && !gamepad2.x, State.LIFTING_TO_SPECIMEN, () -> {
+                    nextHigh = true;
                     pivot.pidTo(1.6);
                     wrist.horizontal();
                 })
@@ -72,6 +78,12 @@ public class Duo extends BluLinearOpMode {
                 .transition(() -> -gamepad2.left_stick_y > 0.2, State.INTAKING, () -> {
                     arm.dropToGround();
                     wheel.intake();
+                })
+                .transition(() -> gamepad2.a, State.RETRACTED, () -> {
+                    extension.retract();
+                    arm.retract();
+                    clamp.grab();
+                    wheel.stop();
                 })
                 .loop(() -> {
                     if(-gamepad2.left_trigger < -0.2) {
@@ -97,6 +109,13 @@ public class Duo extends BluLinearOpMode {
                     extension.retract();
                     arm.retract();
                 })
+
+                .state(State.LIFTING_TO_BASKET_BACK)
+                .transition(() -> gamepad2.a, State.RETRACTED, () -> {
+                    pivot.retract();
+                    wrist.uprightForward();
+                    arm.retract();
+                })
                 .build();
     }
 
@@ -104,6 +123,7 @@ public class Duo extends BluLinearOpMode {
     public void periodic() {
         updateDrivePower();
         dt.teleOpDrive(gamepad1); // driving
+        sm.update(); // state machine
     }
 
     public void setDrivePowers() {
@@ -112,7 +132,7 @@ public class Duo extends BluLinearOpMode {
             put(State.EXTENDED_OVER_INTAKE, 0.7);
             put(State.INTAKING, 0.6);
             put(State.RETRACTING_FROM_INTAKE, 0.8);
-            put(State.LIFTING_TO_BASKET, 0.6);
+            put(State.LIFTING_TO_BASKET_BACK, 0.6);
             put(State.AT_BASKET, 0.4);
             put(State.SCORING_BASKET, 0.3);
             put(State.LIFTING_TO_SPECIMEN, 0.6);
