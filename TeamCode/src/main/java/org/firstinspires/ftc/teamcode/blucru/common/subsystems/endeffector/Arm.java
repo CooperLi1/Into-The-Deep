@@ -11,8 +11,8 @@ public class Arm extends BluServo implements Subsystem {
     public static double
             PARALLEL_POS = 0.17,
     // 90 degrees is from 0.17 to 0.45
-            MAX_POS = 1.0, MIN_POS = 0.0,
-            TICKS_PER_RAD = 1/4.45059;
+            MAX_POS = 0.5, MIN_POS = 0.0,
+            TICKS_PER_RAD = 0.1782;
 
     enum State{
         SERVO,
@@ -58,7 +58,7 @@ public class Arm extends BluServo implements Subsystem {
         super.setPosition(position);
     }
 
-    public void parallel() {
+    public void preIntake() {
         setPosition(PARALLEL_POS);
     }
 
@@ -72,6 +72,10 @@ public class Arm extends BluServo implements Subsystem {
 
     public void turnToBucket() {
         setPosition(PARALLEL_POS + 0.3);
+    }
+
+    public void highSample() {
+        setPosition(PARALLEL_POS + 0.15);
     }
 
     private double toTicks(double rad) {

@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Robot;
 public class ArmHorizontalCommand extends InstantCommand {
     public ArmHorizontalCommand() {
         super(
-                () -> Robot.getInstance().arm.parallel()
+                () -> Robot.getInstance().arm.preIntake()
         );
     }
 }
