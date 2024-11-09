@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector;
 
+import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Robot;
-import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.BluSubsystem;
 
-public class Arm extends BluServo implements Subsystem {
+public class Arm extends BluServo implements BluSubsystem, Subsystem {
     public static double
             PARALLEL_POS = 0.17,
     // 90 degrees is from 0.17 to 0.45

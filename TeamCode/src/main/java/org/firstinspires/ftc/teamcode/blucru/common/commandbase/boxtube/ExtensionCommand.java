@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.commandbase.subsystem.extension;
+package org.firstinspires.ftc.teamcode.blucru.common.commandbase.boxtube;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 
@@ -11,5 +11,7 @@ public class ExtensionCommand extends InstantCommand {
                      Robot.getInstance().extension.pidTo(inches);
                 }
         );
+
+        addRequirements(Robot.getInstance().extension);
     }
 }

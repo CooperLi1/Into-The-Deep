@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.commandbase.subsystem.endeffector.arm;
+package org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.arm;
 
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -10,5 +10,7 @@ public class ArmRetractCommand extends InstantCommand {
         super(
                 () -> Robot.getInstance().arm.retract()
         );
+
+        addRequirements(Robot.getInstance().arm);
     }
 }

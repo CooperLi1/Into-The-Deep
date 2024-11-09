@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.commandbase.subsystem.endeffector.clamp;
+package org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.clamp;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 
@@ -9,5 +9,7 @@ public class ClampReleaseCommand extends InstantCommand {
         super(
                 () -> Robot.getInstance().clamp.release()
         );
+
+        addRequirements(Robot.getInstance().clamp);
     }
 }

@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.Subsystem;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
-import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.BluSubsystem;
 
 @Config
-public class Clamp extends BluServo implements Subsystem {
+public class Clamp extends BluServo implements BluSubsystem, Subsystem {
     public static double HORIZ_POS = 0.77;
 
     public Clamp() {

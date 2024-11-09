@@ -28,7 +28,7 @@ public class Robot {
     public Extension extension;
 
     // list of all subsystems
-    ArrayList<Subsystem> subsystems;
+    ArrayList<BluSubsystem> subsystems;
 
     public static Robot getInstance() {
         if(instance == null) {
@@ -51,7 +51,7 @@ public class Robot {
 //            module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
 //        }
 
-        for(Subsystem subsystem : subsystems) {
+        for(BluSubsystem subsystem : subsystems) {
             subsystem.init();
         }
     }
@@ -62,13 +62,13 @@ public class Robot {
 //            module.clearBulkCache();
 //        }
 
-        for(Subsystem subsystem : subsystems) {
+        for(BluSubsystem subsystem : subsystems) {
             subsystem.read();
         }
     }
 
     public void write() {
-        for(Subsystem subsystem : subsystems) {
+        for(BluSubsystem subsystem : subsystems) {
             subsystem.write();
         }
     }
@@ -85,7 +85,7 @@ public class Robot {
     }
 
     public void telemetry(Telemetry telemetry) {
-        for(Subsystem subsystem : subsystems) {
+        for(BluSubsystem subsystem : subsystems) {
             subsystem.telemetry(telemetry);
         }
     }

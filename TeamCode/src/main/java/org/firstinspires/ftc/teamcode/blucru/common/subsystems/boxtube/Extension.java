@@ -1,15 +1,16 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsystems.boxtube;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.util.MotionProfile;
 
 @Config
-public class Extension implements Subsystem {
+public class Extension implements BluSubsystem, Subsystem {
     public static double
             kP = 0.4, kI = 0.0, kD = 0.02, kFAngle = 0.2, tolerance = 0.0,
             MIN_INCHES = 0.0, MAX_INCHES = 20,
@@ -41,7 +42,6 @@ public class Extension implements Subsystem {
         pivot = null;
     }
 
-    @Override
     public void init() {
         extensionMotor.init();
 
@@ -49,7 +49,6 @@ public class Extension implements Subsystem {
         pidController.reset();
     }
 
-    @Override
     public void read() {
         extensionMotor.read();
 
@@ -66,7 +65,6 @@ public class Extension implements Subsystem {
         }
     }
 
-    @Override
     public void write() {
         switch(state) {
             case IDLE:
@@ -95,8 +93,8 @@ public class Extension implements Subsystem {
         pidController.setSetPoint(0);
     }
 
-    public double getCurrentPos() {
-        return extensionMotor.getCurrentPosition();
+    public double getDistance() {
+        return extensionMotor.getDistance();
     }
 
     public double getFeedForward(double pivotAngle) {
@@ -133,7 +131,6 @@ public class Extension implements Subsystem {
         extensionMotor.resetEncoder();
     }
 
-    @Override
     public void telemetry(Telemetry telemetry) {
         telemetry.addData("Extension State", state);
         extensionMotor.telemetry();

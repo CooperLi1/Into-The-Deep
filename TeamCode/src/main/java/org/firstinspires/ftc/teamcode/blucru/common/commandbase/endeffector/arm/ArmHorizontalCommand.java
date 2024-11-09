@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.commandbase.subsystem.endeffector.arm;
+package org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.arm;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 
@@ -9,5 +9,7 @@ public class ArmHorizontalCommand extends InstantCommand {
         super(
                 () -> Robot.getInstance().arm.preIntake()
         );
+
+        addRequirements(Robot.getInstance().arm);
     }
 }

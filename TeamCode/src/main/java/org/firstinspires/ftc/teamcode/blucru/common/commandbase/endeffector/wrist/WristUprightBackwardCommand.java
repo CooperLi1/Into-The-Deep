@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.commandbase.subsystem.endeffector.wrist;
+package org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.wrist;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 
@@ -9,5 +9,7 @@ public class WristUprightBackwardCommand extends InstantCommand {
         super(
                 () -> Robot.getInstance().wrist.uprightBackward()
         );
+
+        addRequirements(Robot.getInstance().wrist);
     }
 }

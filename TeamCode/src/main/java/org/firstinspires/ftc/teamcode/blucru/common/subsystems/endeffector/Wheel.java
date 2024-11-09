@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector;
 
+import com.arcrobotics.ftclib.command.Subsystem;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluCRServo;
-import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.BluSubsystem;
 
-public class Wheel extends BluCRServo implements Subsystem {
+public class Wheel extends BluCRServo implements BluSubsystem, Subsystem {
     public Wheel() {
         super("wheel");
     }

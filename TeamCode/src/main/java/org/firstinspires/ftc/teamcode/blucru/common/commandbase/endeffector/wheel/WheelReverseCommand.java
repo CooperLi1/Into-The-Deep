@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.commandbase.subsystem.endeffector.wheel;
+package org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.wheel;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 
@@ -9,5 +9,7 @@ public class WheelReverseCommand extends InstantCommand {
         super(
                 () -> Robot.getInstance().wheel.reverse()
         );
+
+        addRequirements(Robot.getInstance().wheel);
     }
 }

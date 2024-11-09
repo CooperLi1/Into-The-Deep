@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.commandbase.subsystem.pivot;
+package org.firstinspires.ftc.teamcode.blucru.common.commandbase.boxtube;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 
@@ -9,5 +9,7 @@ public class PivotCommand extends InstantCommand {
         super(() -> {
             Robot.getInstance().pivot.pidTo(angleRad);
         });
+
+        addRequirements(Robot.getInstance().pivot);
     }
 }
