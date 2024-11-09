@@ -76,6 +76,7 @@ public class Extension implements Subsystem {
                 setPowerFeedForward(pidController.calculate(extensionMotor.getDistance()));
                 break;
             case RESETTING:
+                setPowerFeedForward(-0.1);
                 break;
         }
 

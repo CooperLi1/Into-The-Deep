@@ -23,7 +23,6 @@ public class Pivot implements Subsystem {
     enum State {
         IDLE,
         PID,
-//        MOTION_PROFILE,
         RETRACTING,
         RESETTING
     }
@@ -62,7 +61,6 @@ public class Pivot implements Subsystem {
         switch(state) {
             case IDLE:
             case PID:
-//            case MOTION_PROFILE:
                 break;
             case RETRACTING:
                 if(profile.done() && Math.abs(pivotMotor.getAngle()) < 0.1 && Math.abs(pivotMotor.getAngleVel()) < 0.3) {
@@ -91,7 +89,6 @@ public class Pivot implements Subsystem {
                 double pidPower = pidController.calculate(pivotMotor.getAngle());
                 setPowerFF(pidPower);
                 break;
-//            case MOTION_PROFILE:
             case RETRACTING:
                 double profilePower = pidController.calculate(pivotMotor.getState(), profile);
                 setPowerFF(profilePower);
@@ -101,12 +98,6 @@ public class Pivot implements Subsystem {
         pivotMotor.write();
     }
 
-//    public void setMotionProfileTargetAngle(double targetAngle) {
-//        targetAngle = Range.clip(targetAngle, MIN_RAD, MAX_RAD);
-//        state = State.MOTION_PROFILE;
-//        profile = new MotionProfile(targetAngle, pivotMotor.getAngle(), MAX_VELO, MAX_ACCEL).start();
-//    }
-
     public void pidTo(double angle) {
         state = State.PID;
         pidController.setSetPoint(Range.clip(angle, MIN_RAD, MAX_RAD));
@@ -115,7 +106,6 @@ public class Pivot implements Subsystem {
     public void retract() {
         state = State.RETRACTING;
         pidTo(0.05);
-//        setMotionProfileTargetAngle(0.08);
     }
 
     public double getAngle() {
@@ -128,10 +118,6 @@ public class Pivot implements Subsystem {
 
     private double getFF(double extensionInches) {
         return Math.cos(pivotMotor.getAngle()) * (kFF_COS + kFF_EXTENSION * extensionInches);
-    }
-
-    public void setTargetAngle(double angleRad) {
-        pidController.setSetPoint(Range.clip(angleRad, MIN_RAD, MAX_RAD));
     }
 
     public void updatePID() {
