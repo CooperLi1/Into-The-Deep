@@ -4,11 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.boxtube.ExtensionMotor;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.boxtube.PivotMotor;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
-@TeleOp(name = "Extension Encoder Test", group = "test")
-public class ExtensionEncoderTest extends LinearOpMode {
+@TeleOp(name = "Pivot Extension Encoder Test", group = "test")
+public class PivotExtensionEncoderTest extends LinearOpMode {
     ExtensionMotor extension;
+    PivotMotor pivot;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -16,19 +18,18 @@ public class ExtensionEncoderTest extends LinearOpMode {
         Globals.tele = telemetry;
 
         extension = new ExtensionMotor();
+        pivot = new PivotMotor();
         extension.init();
+        pivot.init();
 
         waitForStart();
 
         while (opModeIsActive()) {
             extension.read();
+            pivot.read();
 
-            extension.setPower(-gamepad1.right_stick_y);
-
-            extension.write();
-
-            telemetry.addData("distance", extension.getDistance());
-            telemetry.addData("distance vel", extension.getDistanceVel());
+            extension.telemetry();
+            pivot.telemetry();
             telemetry.update();
         }
     }

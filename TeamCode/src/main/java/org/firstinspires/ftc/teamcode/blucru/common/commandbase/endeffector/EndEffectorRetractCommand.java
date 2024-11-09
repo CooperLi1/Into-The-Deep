@@ -18,12 +18,5 @@ public class EndEffectorRetractCommand extends SequentialCommandGroup {
                 new WaitCommand(300),
                 new WristHorizontalCommand()
         );
-
-        addRequirements(
-                 Robot.getInstance().clamp,
-                 Robot.getInstance().arm,
-                 Robot.getInstance().wheel,
-                 Robot.getInstance().wrist
-        );
     }
 }

@@ -18,7 +18,5 @@ public class BoxtubeRetractCommand extends SequentialCommandGroup {
                         new PivotRetractCommand()
                 )
         );
-
-        addRequirements(Robot.getInstance().pivot, Robot.getInstance().extension);
     }
 }

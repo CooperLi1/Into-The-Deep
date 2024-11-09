@@ -30,7 +30,5 @@ public class BoxtubeExtendCommand extends SequentialCommandGroup {
                         () -> extensionDistance > Robot.getInstance().extension.getDistance()
                 )
         );
-
-        addRequirements(Robot.getInstance().pivot, Robot.getInstance().extension);
     }
 }
