@@ -11,9 +11,9 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.MotionProfile;
 @Config
 public class Extension implements Subsystem {
     public static double
-            kP = 0.0, kI = 0.0, kD = 0.0, kFAngle = 0.0, tolerance = 0.0,
+            kP = 0.4, kI = 0.0, kD = 0.02, kFAngle = 0.2, tolerance = 0.0,
             MIN_INCHES = 0.0, MAX_INCHES = 20,
-            MAX_EXTEND_POWER = 0.8, MAX_RETRACT_POWER = -0.8;
+            MAX_EXTEND_POWER = 1.0, MAX_RETRACT_POWER = -1.0;
 
     enum State {
         IDLE,
@@ -73,7 +73,7 @@ public class Extension implements Subsystem {
                 break;
             case PID:
             case RETRACTING:
-                setPowerFeedForward(pidController.calculate());
+                setPowerFeedForward(pidController.calculate(extensionMotor.getDistance()));
                 break;
             case RESETTING:
                 break;
@@ -86,7 +86,6 @@ public class Extension implements Subsystem {
         inches = Range.clip(inches, MIN_INCHES, MAX_INCHES);
 
         state = State.PID;
-        pidController.reset();
         pidController.setSetPoint(inches);
     }
 
@@ -127,6 +126,10 @@ public class Extension implements Subsystem {
 
     public ExtensionMotor getMotor() {
         return extensionMotor;
+    }
+
+    public void resetEncoder() {
+        extensionMotor.resetEncoder();
     }
 
     @Override

@@ -14,6 +14,12 @@ public class Wrist extends BluServo implements Subsystem {
         super("wrist");
     }
 
+    @Override
+    public void init() {
+        super.init();
+        uprightForward();
+    }
+
     public void uprightForward() {
         setPosition(HORIZONTAL_POS - 0.28);
     }
