@@ -116,7 +116,7 @@ public class Extension implements BluSubsystem, Subsystem {
         return Math.sin(pivotAngle) * kFAngle;
     }
 
-    public void setManualPower(double power) {
+    public void setManualIntakingPower(double power) {
         state = State.MANUAL;
         manualPower = power;
     }
