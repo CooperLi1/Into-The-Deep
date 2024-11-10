@@ -2,28 +2,26 @@ package org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.local
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
 
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
-public class PinpointFusedLocalizer implements Localizer {
+@Config
+public class PinpointLocalizer implements Localizer {
+    public static double xOffset = -149.4375, yOffset = 106.0;
     GoBildaPinpointDriver pinpoint;
 
-    public PinpointFusedLocalizer() {
+    public PinpointLocalizer() {
         pinpoint = Globals.hwMap.get(GoBildaPinpointDriver.class, "pinpoint");
-    }
-
-    public void init(Pose2d startPose) {
         pinpoint.setEncoderDirections(
                 GoBildaPinpointDriver.EncoderDirection.FORWARD,
                 GoBildaPinpointDriver.EncoderDirection.FORWARD);
         pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        pinpoint.setOffsets(-149.4375, 106.0);
-//        pinpoint.setOffsets(106.0, -149.4375);
+        pinpoint.setOffsets(xOffset, yOffset);
 
         pinpoint.resetPosAndIMU();
-        pinpoint.setPosition(startPose);
     }
 
     @Override

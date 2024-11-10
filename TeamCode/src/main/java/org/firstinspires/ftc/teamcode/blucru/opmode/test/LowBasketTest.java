@@ -58,12 +58,12 @@ public class LowBasketTest extends BluLinearOpMode {
                 })
                 .transition(() -> stickyG2.b, State.SCORING_BASKET, () -> {
                     new BoxtubeExtendCommand(1.6, 13).schedule();
-                    new WristUprightBackwardCommand().schedule();
+                    new WristUprightForwardCommand().schedule();
                     new ArmGlobalAngleCommand(3.4).schedule();
                 })
                 .transition(() -> stickyG2.y, State.SCORING_BASKET, () -> {
                     new BoxtubeExtendCommand(1.6, 22).schedule();
-                    new WristUprightBackwardCommand().schedule();
+                    new WristUprightForwardCommand().schedule();
                     new ArmGlobalAngleCommand(2.2).schedule();
                 })
 
