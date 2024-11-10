@@ -1,157 +1,153 @@
 package org.firstinspires.ftc.teamcode.blucru.opmode.teleop;
 
-import com.arcrobotics.ftclib.command.CommandScheduler;
+
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 
+import org.firstinspires.ftc.teamcode.blucru.common.commandbase.boxtube.BoxtubeExtendCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commandbase.boxtube.BoxtubeRetractCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commandbase.boxtube.ExtensionRetractCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.EndEffectorRetractCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.arm.ArmDropToGroundCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.arm.ArmGlobalAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.arm.ArmPreIntakeCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.arm.ArmRetractCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.clamp.ClampGrabCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.clamp.ClampReleaseCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.wheel.WheelIntakeCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.wheel.WheelStopCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.wrist.WristUprightForwardCommand;
 import org.firstinspires.ftc.teamcode.blucru.opmode.BluLinearOpMode;
 
-import java.util.HashMap;
-
+@TeleOp(name = "Main TeleOp", group = "test")
 public class Duo extends BluLinearOpMode {
     enum State {
         RETRACTED,
-        EXTENDED_OVER_INTAKE,
+        EXTENDING_OVER_INTAKE,
         INTAKING,
-        RETRACTING_FROM_INTAKE,
-        LIFTING_TO_BASKET_BACK,
-        AT_BASKET,
         SCORING_BASKET,
-        LIFTING_TO_SPECIMEN,
-        AT_SPECIMEN,
-        DUNKING_SPECIMEN,
-        RETRACTING_FROM_SCORING
+        RETRACTING_FROM_SCORING,
+        RETRACTING_FROM_INTAKE
     }
 
-    HashMap<State, Double> drivePowers;
-
-    State state;
     StateMachine sm;
-    boolean nextHigh = false;
 
     @Override
     public void initialize() {
-        setDrivePowers();
-
         addDrivetrain();
         addExtension();
         addPivot();
         addArm();
-        addClamp();
         addWheel();
+        addClamp();
         addWrist();
+        extension.usePivot(pivot.getMotor());
+        pivot.useExtension(extension.getMotor());
+
+        dt.drivePower = 0.8;
 
         sm = new StateMachineBuilder()
                 .state(State.RETRACTED)
-                .transition(() -> gamepad2.left_bumper, State.EXTENDED_OVER_INTAKE, () -> {
-                    extension.pidTo(7);
-                    clamp.release();
-                    arm.preIntake();
+                .transition(() -> -gamepad2.right_stick_y > 0.2, State.EXTENDING_OVER_INTAKE, () -> {
+                    extension.setManualPower(-gamepad2.right_stick_y);
+                    new ArmPreIntakeCommand().schedule();
                 })
-                .transition(() -> gamepad2.right_bumper, State.EXTENDED_OVER_INTAKE, () -> {
-                    extension.pidTo(15);
-                    clamp.release();
-                    arm.preIntake();
+                .transition(() -> stickyG2.b, State.SCORING_BASKET, () -> {
+                    new BoxtubeExtendCommand(1.6, 13).schedule();
+                    new WristUprightForwardCommand().schedule();
+                    new ArmGlobalAngleCommand(3.4).schedule();
                 })
-                .transition(() -> gamepad2.dpad_right && !gamepad2.x, State.LIFTING_TO_BASKET_BACK, () -> {
-                    nextHigh = true;
-                    pivot.pidTo(1.6);
-                    wrist.uprightBackward();
-                })
-                .transition(() -> gamepad2.dpad_down && !gamepad2.x, State.LIFTING_TO_BASKET_BACK, () -> {
-                    nextHigh = false;
-                    pivot.pidTo(1.6);
-                    wrist.uprightBackward();
-                })
-                .transition(() -> gamepad2.dpad_left && !gamepad2.x, State.LIFTING_TO_SPECIMEN, () -> {
-                    nextHigh = false;
-                    pivot.pidTo(1.6);
-                    wrist.horizontal();
-                })
-                .transition(() -> gamepad2.dpad_up && !gamepad2.x, State.LIFTING_TO_SPECIMEN, () -> {
-                    nextHigh = true;
-                    pivot.pidTo(1.6);
-                    wrist.horizontal();
+                .transition(() -> stickyG2.y, State.SCORING_BASKET, () -> {
+                    new BoxtubeExtendCommand(1.6, 22).schedule();
+                    new WristUprightForwardCommand().schedule();
+                    new ArmGlobalAngleCommand(2.2).schedule();
                 })
 
-                .state(State.EXTENDED_OVER_INTAKE)
-                .transition(() -> -gamepad2.left_stick_y > 0.2, State.INTAKING, () -> {
-                    arm.dropToGround();
-                    wheel.intake();
+                .state(State.EXTENDING_OVER_INTAKE)
+                .transition(() -> gamepad2.left_bumper, State.INTAKING, () -> {
+                    new ArmDropToGroundCommand().schedule();
+                    new WheelIntakeCommand().schedule();
+                    new ClampReleaseCommand().schedule();
                 })
-                .transition(() -> gamepad2.a, State.RETRACTED, () -> {
-                    extension.retract();
-                    arm.retract();
-                    clamp.grab();
-                    wheel.stop();
+                .transition(() -> stickyG2.a, State.RETRACTED, () -> {
+                    new ExtensionRetractCommand().schedule();
+                    new EndEffectorRetractCommand().schedule();
                 })
                 .loop(() -> {
-                    if(-gamepad2.left_trigger < -0.2) {
+                    if(Math.abs(gamepad2.right_stick_y) > 0.2) extension.setManualPower(-gamepad2.right_stick_y);
+                    if(gamepad2.right_bumper) {
                         wheel.reverse();
+                        clamp.release();
                     } else {
                         wheel.stop();
+                        clamp.grab();
                     }
                 })
 
                 .state(State.INTAKING)
-                .transition(() -> gamepad2.a, State.RETRACTING_FROM_INTAKE, () -> {
-                    arm.preIntake();
-                    clamp.grab();
-                    wheel.stop();
+                .transition(() -> stickyG2.a, State.RETRACTED, () -> {
+                    new SequentialCommandGroup(
+                            new ClampGrabCommand(),
+                            new WheelStopCommand(),
+                            new ArmPreIntakeCommand(),
+//                            new WaitCommand(300),
+                            new ExtensionRetractCommand(),
+                            new EndEffectorRetractCommand()
+                    ).schedule();
                 })
-                .transition(() -> -gamepad2.left_stick_y < 0.2, State.EXTENDED_OVER_INTAKE, () -> {
-                    arm.preIntake();
-                    wheel.stop();
+                .transition(() -> !gamepad2.left_bumper, State.EXTENDING_OVER_INTAKE, () -> {
+                    new ClampGrabCommand().schedule();
+                    new WheelStopCommand().schedule();
+                    new ArmPreIntakeCommand().schedule();
+                })
+                .loop(() -> {
+                    if(Math.abs(-gamepad2.right_stick_y) > 0.2) {
+                        extension.setManualPower(-gamepad2.right_stick_y);
+                    }
+                    clamp.release();
+                    wheel.intake();
                 })
 
-                .state(State.RETRACTING_FROM_INTAKE)
-                .transitionTimed(0.3, State.RETRACTED, () -> {
-                    extension.retract();
-                    arm.retract();
+                .state(State.SCORING_BASKET)
+                .transition(() -> stickyG2.a, State.RETRACTED, () -> {
+                    new SequentialCommandGroup(
+                            new ArmGlobalAngleCommand(1.2),
+                            new WaitCommand(150),
+                            new BoxtubeRetractCommand(),
+                            new ClampGrabCommand(),
+                            new WristUprightForwardCommand(),
+                            new WheelStopCommand(),
+                            new WaitCommand(100),
+                            new ArmRetractCommand()
+                    ).schedule();
                 })
-
-                .state(State.LIFTING_TO_BASKET_BACK)
-                .transition(() -> gamepad2.a, State.RETRACTED, () -> {
-                    pivot.retract();
-                    wrist.uprightForward();
-                    arm.retract();
+                .loop(() -> {
+                    if(gamepad2.left_bumper) {
+                        clamp.release();
+                        wheel.reverse();
+                    } else {
+                        clamp.grab();
+                        wheel.stop();
+                    }
                 })
                 .build();
+
+        sm.setState(State.RETRACTED);
+        sm.start();
     }
 
     @Override
     public void periodic() {
-        updateDrivePower();
-        dt.teleOpDrive(gamepad1); // driving
-        sm.update(); // state machine
-    }
-
-    public void setDrivePowers() {
-        drivePowers = new HashMap<State, Double>() {{
-            put(State.RETRACTED, 0.9);
-            put(State.EXTENDED_OVER_INTAKE, 0.7);
-            put(State.INTAKING, 0.6);
-            put(State.RETRACTING_FROM_INTAKE, 0.8);
-            put(State.LIFTING_TO_BASKET_BACK, 0.6);
-            put(State.AT_BASKET, 0.4);
-            put(State.SCORING_BASKET, 0.3);
-            put(State.LIFTING_TO_SPECIMEN, 0.6);
-            put(State.AT_SPECIMEN, 0.4);
-            put(State.DUNKING_SPECIMEN, 0.4);
-            put(State.RETRACTING_FROM_SCORING, 0.7);
-        }};
-    }
-
-    public void updateDrivePower() {
-        try {
-            dt.drivePower = drivePowers.get(state);
-        } catch(NullPointerException e) {
-            dt.drivePower = 0.5;
-        }
+        dt.teleOpDrive(gamepad1);
+        if(gamepad1.right_stick_button) dt.resetHeading(Math.PI/2);
+        sm.update();
     }
 
     @Override
     public void telemetry() {
-        telemetry.addData("State", state);
+        telemetry.addData("state", sm.getState());
     }
 }
