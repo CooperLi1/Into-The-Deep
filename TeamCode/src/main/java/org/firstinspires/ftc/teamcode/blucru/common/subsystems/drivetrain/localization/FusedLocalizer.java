@@ -46,7 +46,6 @@ public class FusedLocalizer {
     public boolean updateAprilTags(AprilTagProcessor tagProcessor) {
         if(System.currentTimeMillis() - lastTagUpdateMillis < TAG_UPDATE_DELAY) return false; // only update every TAG_UPDATE_DELAY ms
 
-
         ArrayList<AprilTagDetection> detections = tagProcessor.getDetections();
         if(detections.size() < 1) {
             Log.v("FusedLocalizer", "No tags found");
@@ -94,7 +93,6 @@ public class FusedLocalizer {
         Log.d("FusedLocalizer", "Current pose: " + currentPose);
         Log.d("FusedLocalizer", "Raw correction: " + odoPoseError);
         Log.d("FusedLocalizer", "Weighted correction: " + weightedCorrection);
-
 
         Pose2d newPose = new Pose2d(currentPose.vec().plus(weightedCorrection.vec()), currentPose.getHeading());
         Log.i("FusedLocalizer", "Updated pose to: " + newPose);

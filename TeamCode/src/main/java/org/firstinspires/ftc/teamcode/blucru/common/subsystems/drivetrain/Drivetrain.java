@@ -34,7 +34,6 @@ public class Drivetrain extends SampleMecanumDrive implements BluSubsystem, Subs
             HEADING_P = 1.9, HEADING_I = 0, HEADING_D = 0.06, HEADING_PID_TOLERANCE = 0.0, // radians
             HEADING_AT_POSE_TOLERANCE = 0.15,
 
-            TRANSLATION_P = 0.18, TRANSLATION_I = 0, TRANSLATION_D = 0.029, TRANSLATION_PID_TOLERANCE = 0, // PID constants for translation
             TRANSLATION_AT_POSE_TOLERANCE = 0.55,
 
             STRAFE_kStatic = 0.05, FORWARD_kStatic = 0.02; // feedforward constants for static friction
@@ -50,7 +49,7 @@ public class Drivetrain extends SampleMecanumDrive implements BluSubsystem, Subs
     public boolean fieldCentric; // whether the robot is field centric or robot centric
     double dt, lastTime;
 
-    DrivePID translationPID;
+    DrivePID drivePID;
     public Pose2d targetPose;
     FusedLocalizer fusedLocalizer;
 
@@ -66,7 +65,7 @@ public class Drivetrain extends SampleMecanumDrive implements BluSubsystem, Subs
         headingPID = new PIDController(HEADING_P, HEADING_I, HEADING_D);
         headingPID.setTolerance(HEADING_PID_TOLERANCE);
 
-        translationPID = new DrivePID(TRANSLATION_P, TRANSLATION_I, TRANSLATION_D, TRANSLATION_PID_TOLERANCE);
+        drivePID = new DrivePID();
         fusedLocalizer = new FusedLocalizer(getLocalizer());
         lastDriveVector = new Vector2d(0,0);
 
@@ -213,8 +212,8 @@ public class Drivetrain extends SampleMecanumDrive implements BluSubsystem, Subs
     }
 
     public void driveToPosition(Pose2d targetPosition) {
-        translationPID.setTargetPosition(targetPosition.vec());
-        Vector2d rawDriveVector = translationPID.calculate(getPoseEstimate().vec());
+        drivePID.setTargetPosition(targetPosition.vec());
+        Vector2d rawDriveVector = drivePID.calculate(getPoseEstimate().vec());
 
         driveToHeadingClip(rawDriveVector.getX(), rawDriveVector.getY(), targetPosition.getHeading());
     }
@@ -257,7 +256,7 @@ public class Drivetrain extends SampleMecanumDrive implements BluSubsystem, Subs
     }
 
     public void updateTranslationPID() {
-        translationPID.setPID(TRANSLATION_P, TRANSLATION_I, TRANSLATION_D);
+        drivePID.updatePID();
     }
 
     private double getHeadingPID(double target) {
