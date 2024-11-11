@@ -51,6 +51,7 @@ public class Duo extends BluLinearOpMode {
 
         sm = new StateMachineBuilder()
                 .state(State.RETRACTED)
+                .onEnter(() -> dt.drivePower = 0.9)
                 .transition(() -> -gamepad2.right_stick_y > 0.2, State.EXTENDING_OVER_INTAKE, () -> {
                     extension.setManualIntakingPower(-gamepad2.right_stick_y);
                     new ArmPreIntakeCommand().schedule();
@@ -67,6 +68,7 @@ public class Duo extends BluLinearOpMode {
                 })
 
                 .state(State.EXTENDING_OVER_INTAKE)
+                .onEnter(() -> dt.drivePower = 0.75)
                 .transition(() -> gamepad2.left_bumper, State.INTAKING, () -> {
                     new ArmDropToGroundCommand().schedule();
                     new WheelIntakeCommand().schedule();
@@ -88,6 +90,7 @@ public class Duo extends BluLinearOpMode {
                 })
 
                 .state(State.INTAKING)
+                .onEnter(() -> dt.drivePower = 0.75)
                 .transition(() -> stickyG2.a, State.RETRACTED, () -> {
                     new SequentialCommandGroup(
                             new ClampGrabCommand(),
@@ -112,6 +115,7 @@ public class Duo extends BluLinearOpMode {
                 })
 
                 .state(State.SCORING_BASKET)
+                .onEnter(() -> dt.drivePower = 0.45)
                 .transition(() -> stickyG2.a, State.RETRACTED, () -> {
                     new SequentialCommandGroup(
                             new ArmGlobalAngleCommand(1.2),
@@ -131,6 +135,12 @@ public class Duo extends BluLinearOpMode {
                     } else {
                         clamp.grab();
                         wheel.stop();
+                    }
+
+                    if(stickyG2.y) {
+                        new BoxtubeExtendCommand(1.6, 22).schedule();
+                        new WristUprightForwardCommand().schedule();
+                        new ArmGlobalAngleCommand(2.2).schedule();
                     }
                 })
                 .build();

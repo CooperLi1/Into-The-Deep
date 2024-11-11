@@ -117,7 +117,6 @@ public class SpecimenTest extends BluLinearOpMode {
                             new ClampGrabCommand(),
                             new WristUprightForwardCommand(),
                             new WheelStopCommand(),
-                            new WaitCommand(100),
                             new ArmRetractCommand()
                     ).schedule();
                 })
