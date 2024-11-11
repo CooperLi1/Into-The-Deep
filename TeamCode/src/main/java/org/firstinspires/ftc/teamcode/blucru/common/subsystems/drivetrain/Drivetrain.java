@@ -45,29 +45,29 @@ public class Drivetrain extends SampleMecanumDrive implements BluSubsystem, Subs
         FOLLOWING_TRAJECTORY
     }
 
-    State drivetrainState;
+    State state;
     public double drivePower = 0.5;
+    public boolean fieldCentric; // whether the robot is field centric or robot centric
     double dt, lastTime;
 
     DrivePID translationPID;
     public Pose2d targetPose;
-    public FusedLocalizer fusedLocalizer;
+    FusedLocalizer fusedLocalizer;
 
     PIDController headingPID;
     double targetHeading = 0;
-    public boolean fieldCentric; // whether the robot is field centric or robot centric
 
     Vector2d lastDriveVector; // drive vector in previous loop
     double lastRotateInput; // rotate input in previous loop
 
     public Drivetrain(HardwareMap hardwareMap) {
         super(hardwareMap);
-        this.drivetrainState = State.TELEOP;
+        this.state = State.TELEOP;
         headingPID = new PIDController(HEADING_P, HEADING_I, HEADING_D);
         headingPID.setTolerance(HEADING_PID_TOLERANCE);
 
         translationPID = new DrivePID(TRANSLATION_P, TRANSLATION_I, TRANSLATION_D, TRANSLATION_PID_TOLERANCE);
-        fusedLocalizer = new FusedLocalizer(getLocalizer(), hardwareMap);
+        fusedLocalizer = new FusedLocalizer(getLocalizer());
         lastDriveVector = new Vector2d(0,0);
 
         fieldCentric = true;
@@ -78,9 +78,7 @@ public class Drivetrain extends SampleMecanumDrive implements BluSubsystem, Subs
     public void init() {
         initializePose();
 
-        this.drivetrainState = State.TELEOP;
-
-        fusedLocalizer.init();
+        this.state = State.TELEOP;
     }
 
     public void read() {
@@ -91,7 +89,7 @@ public class Drivetrain extends SampleMecanumDrive implements BluSubsystem, Subs
     }
 
     public void write() {
-        switch(drivetrainState) {
+        switch(state) {
             case TELEOP:
                 break;
             case DRIVE_TO_POSITION:
@@ -104,7 +102,7 @@ public class Drivetrain extends SampleMecanumDrive implements BluSubsystem, Subs
     }
 
     public void teleOpDrive(double x, double y, double rotate) {
-        drivetrainState = State.TELEOP;
+        state = State.TELEOP;
 
         boolean driving = Math.abs(x) > 0.02 || Math.abs(y) > 0.02 || Math.abs(rotate) > 0.02;
         boolean turning = Math.abs(rotate) > 0.02;
@@ -239,13 +237,13 @@ public class Drivetrain extends SampleMecanumDrive implements BluSubsystem, Subs
     }
 
     public void idle() {
-        drivetrainState = State.TELEOP;
+        state = State.TELEOP;
         lastDriveVector = new Vector2d(0,0);
     }
 
     public void pidTo(Pose2d pose) {
         fieldCentric = true;
-        drivetrainState = State.DRIVE_TO_POSITION;
+        state = State.DRIVE_TO_POSITION;
         pose = new Pose2d(pose.getX(), pose.getY(), Angle.norm(pose.getHeading()));
         setTargetPose(pose);
     }
@@ -294,7 +292,6 @@ public class Drivetrain extends SampleMecanumDrive implements BluSubsystem, Subs
     }
 
     public void resetHeading(double heading) {
-        fusedLocalizer.resetHeading(heading);
         setExternalHeading(heading);
         Log.i("Drivetrain", "Reset heading to " + heading);
     }
@@ -368,7 +365,7 @@ public class Drivetrain extends SampleMecanumDrive implements BluSubsystem, Subs
         telemetry.addData("drive power", drivePower);
         telemetry.addData("field centric", fieldCentric);
         telemetry.addData("target heading", headingPID.getSetPoint());
-        telemetry.addData("DRIVETRAIN STATE:", drivetrainState);
+        telemetry.addData("DRIVETRAIN STATE:", state);
         telemetry.addData("pose", getPoseEstimate());
         telemetry.addData("velocity", getPoseVelocity());
     }
