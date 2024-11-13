@@ -40,7 +40,7 @@ public class Globals {
     }
 
     public static Pose2d mapPose(double x, double y, double headingDegrees) {
-        return new Pose2d(x, y * reflect, Math.toRadians(headingDegrees * reflect));
+        return new Pose2d(x * reflect, y * reflect, Math.toRadians(headingDegrees * reflect));
     }
 
     public static void setVoltage(double voltage) {
