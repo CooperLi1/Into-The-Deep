@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
+import com.acmerobotics.roadrunner.util.Angle;
 
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
@@ -43,5 +44,14 @@ public class PinpointLocalizer implements Localizer {
     @Override
     public Pose2d getPoseVelocity() {
         return pinpoint.getVelocity();
+    }
+
+    public void setHeading(double heading) {
+        heading = Angle.norm(heading);
+        setPoseEstimate(new Pose2d(getPoseEstimate().vec(), heading));
+    }
+
+    public double getHeading() {
+        return getPoseEstimate().getHeading();
     }
 }
