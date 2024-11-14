@@ -66,7 +66,7 @@ public class Drivetrain extends SampleMecanumDrive implements BluSubsystem, Subs
         headingPID.setTolerance(HEADING_PID_TOLERANCE);
 
         drivePID = new DrivePID();
-        fusedLocalizer = new FusedLocalizer(getLocalizer());
+        fusedLocalizer = new FusedLocalizer();
         lastDriveVector = new Vector2d(0,0);
 
         fieldCentric = true;

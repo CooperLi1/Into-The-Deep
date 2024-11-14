@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.StickyGamepad;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.boxtube.Extension;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.boxtube.Pivot;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.DriveBase;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector.Arm;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector.Clamp;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector.Wheel;
@@ -30,6 +31,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public Pivot pivot;
     public Wheel wheel;
     public Extension extension;
+    public DriveBase driveBase;
 
     public StickyGamepad stickyG1;
     public StickyGamepad stickyG2;
@@ -121,6 +123,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public void addPivot() {pivot = robot.addPivot();}
     public void addWheel() {wheel = robot.addWheel();}
     public void addExtension() {extension = robot.addExtension();}
+    public void addDriveBase() {driveBase = robot.addDriveBase();}
 
     // enable the FTC Dashboard telemetry and field overlay
     public void enableFTCDashboard() {

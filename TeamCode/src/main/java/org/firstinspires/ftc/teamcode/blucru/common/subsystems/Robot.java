@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.boxtube.Extension;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.boxtube.Pivot;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.DriveBase;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector.Arm;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.endeffector.Clamp;
@@ -26,6 +27,7 @@ public class Robot {
     public Wheel wheel;
     public Pivot pivot;
     public Extension extension;
+    public DriveBase driveBase;
 
     // list of all subsystems
     ArrayList<BluSubsystem> subsystems;
@@ -130,6 +132,12 @@ public class Robot {
         extension = new Extension();
         subsystems.add(extension);
         return extension;
+    }
+
+    public DriveBase addDriveBase() {
+        driveBase = new DriveBase();
+        subsystems.add(driveBase);
+        return driveBase;
     }
 
     // call this after every op mode

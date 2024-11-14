@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.Subsystem;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -33,8 +34,12 @@ public class NewDrivetrain extends DriveBase implements Subsystem {
         super.write();
     }
 
+    public void setTargetPose(Pose2d targetPose) {
+        pid.setTargetPose(targetPose);
+    }
+
     @Override
     public void telemetry(Telemetry telemetry) {
-
+        telemetry.addData("Drivetrain State", state);
     }
 }

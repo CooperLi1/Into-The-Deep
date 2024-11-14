@@ -1,0 +1,32 @@
+package org.firstinspires.ftc.teamcode.blucru.opmode.test;
+
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.blucru.opmode.BluLinearOpMode;
+
+@TeleOp(name = "Drive Base Test", group = "test")
+public class DriveBaseTest extends BluLinearOpMode {
+    @Override
+    public void initialize() {
+        addDriveBase();
+    }
+
+    @Override
+    public void periodic() {
+        double x = gamepad1.left_stick_x;
+        double y = -gamepad1.left_stick_y;
+        double rot = -gamepad1.right_stick_x;
+
+
+        Pose2d drivePose = new Pose2d(x, y, rot);
+
+        if(gamepad1.right_stick_button) {
+            driveBase.setHeading(Math.PI/2);
+        }
+
+//        Pose2d drivePose = new Pose2d(new Vector2d(x,y).rotated(-Math.PI/2), rot);
+        driveBase.driveFieldCentric(drivePose);
+    }
+}
