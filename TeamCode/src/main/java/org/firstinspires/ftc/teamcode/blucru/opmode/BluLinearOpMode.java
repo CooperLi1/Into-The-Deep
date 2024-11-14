@@ -67,6 +67,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
             telemetry.update();
         }
         waitForStart();
+        robot.read();
         onStart();
         Globals.runtime.reset();
         runtime = new ElapsedTime(); // start timer
@@ -75,12 +76,13 @@ public abstract class BluLinearOpMode extends LinearOpMode {
         while (!isStopRequested() && opModeIsActive()) {
             stickyG1.update();
             stickyG2.update();
-            robot.read();
 
             // safety for switching controllers
             if(gamepad1.start || gamepad2.start) {
                 continue;
             }
+
+            robot.read();
 
             periodic();
             CommandScheduler.getInstance().run();
@@ -125,7 +127,6 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     // enable the FTC Dashboard telemetry and field overlay
     public void enableFTCDashboard() {
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
-        Globals.tele = telemetry;
     }
 
     public double currentSecs() {return runtime.seconds();}
