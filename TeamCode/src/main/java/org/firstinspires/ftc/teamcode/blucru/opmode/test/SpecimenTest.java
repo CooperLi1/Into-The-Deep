@@ -29,6 +29,8 @@ public class SpecimenTest extends BluLinearOpMode {
         RETRACTED,
         EXTENDING_OVER_INTAKE,
         INTAKING,
+        EXTENDING_TO_WALL,
+        INTAKING_WALL,
         ABOVE_SPECIMEN,
         DUNKING_SPECIMEN
     }
@@ -61,6 +63,43 @@ public class SpecimenTest extends BluLinearOpMode {
                     new BoxtubeExtendCommand(1.4, 5).schedule();
                     new WristHorizontalCommand().schedule();
                     new ArmGlobalAngleCommand(2.5).schedule();
+                })
+                .transition(() -> stickyG2.x, State.EXTENDING_TO_WALL, () -> {
+                    new BoxtubeExtendCommand(0.27, 5.3).schedule();
+                    new WristHorizontalCommand().schedule();
+                    new ArmGlobalAngleCommand(0).schedule();
+                })
+
+                .state(State.EXTENDING_TO_WALL)
+                .transition(() -> gamepad2.left_bumper, State.INTAKING_WALL, () -> {
+                    new WheelIntakeCommand().schedule();
+                    new ClampReleaseCommand().schedule();
+                })
+                .transition(() -> stickyG2.a, State.RETRACTED, () -> {
+                    new SequentialCommandGroup(
+                            new ArmGlobalAngleCommand(1),
+                            new BoxtubeExtendCommand(0.45, 5.6),
+                            new WaitCommand(300),
+                            new EndEffectorRetractCommand(),
+                            new BoxtubeRetractCommand()
+                    ).schedule();
+                })
+
+                .state(State.INTAKING_WALL)
+                .transition(() -> stickyG2.a, State.RETRACTED, () -> {
+                    new SequentialCommandGroup(
+                            new ClampGrabCommand(),
+                            new WheelStopCommand(),
+                            new ArmGlobalAngleCommand(1),
+                            new BoxtubeExtendCommand(0.45, 5.6),
+                            new WaitCommand(300),
+                            new EndEffectorRetractCommand(),
+                            new BoxtubeRetractCommand()
+                    ).schedule();
+                })
+                .transition(() -> !gamepad2.left_bumper, State.EXTENDING_TO_WALL, () -> {
+                    new ClampGrabCommand().schedule();
+                    new WheelStopCommand().schedule();
                 })
 
                 .state(State.EXTENDING_OVER_INTAKE)

@@ -104,7 +104,7 @@ public class Pivot implements BluSubsystem, Subsystem {
     }
 
     public void retract() {
-        pidTo(0.05);
+        pidTo(0.0);
         retractTime = Globals.time();
         state = State.RETRACTING;
     }

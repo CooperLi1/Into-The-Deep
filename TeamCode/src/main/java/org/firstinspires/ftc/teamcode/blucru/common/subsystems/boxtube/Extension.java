@@ -94,7 +94,7 @@ public class Extension implements BluSubsystem, Subsystem {
                 setPowerFeedForward(pidController.calculate(extensionMotor.getDistance()));
                 break;
             case RESETTING:
-                setPowerFeedForward(-0.25);
+                setPowerFeedForward(-0.15);
                 break;
         }
 

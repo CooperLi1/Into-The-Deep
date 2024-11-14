@@ -121,7 +121,7 @@ public class Duo extends BluLinearOpMode {
                 .onEnter(() -> dt.drivePower = 0.45)
                 .transition(() -> stickyG2.a, State.RETRACTED, () -> {
                     new SequentialCommandGroup(
-                            new ArmGlobalAngleCommand(1.2),
+                            new ArmGlobalAngleCommand(1.5),
                             new WaitCommand(150),
                             new BoxtubeRetractCommand(),
                             new ClampGrabCommand(),
