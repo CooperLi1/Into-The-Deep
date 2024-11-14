@@ -58,7 +58,7 @@ public class SpecimenTest extends BluLinearOpMode {
                     new ArmPreIntakeCommand().schedule();
                 })
                 .transition(() -> stickyG2.b, State.ABOVE_SPECIMEN, () -> {
-                    new BoxtubeExtendCommand(1.6, 11).schedule();
+                    new BoxtubeExtendCommand(1.4, 5).schedule();
                     new WristHorizontalCommand().schedule();
                     new ArmGlobalAngleCommand(2.5).schedule();
                 })
@@ -121,12 +121,12 @@ public class SpecimenTest extends BluLinearOpMode {
                     ).schedule();
                 })
                 .transition(() -> gamepad2.left_bumper, State.DUNKING_SPECIMEN, () -> {
-                    new BoxtubeExtendCommand(1.8, 10).schedule();
+                    new BoxtubeExtendCommand(1.6, 0).schedule();
                 })
 
                 .state(State.DUNKING_SPECIMEN)
                 .transition(() -> !gamepad2.left_bumper, State.ABOVE_SPECIMEN, () -> {
-                    new BoxtubeExtendCommand(1.6, 11).schedule();
+                    new BoxtubeExtendCommand(1.4, 5).schedule();
                 })
                 .transition(() -> stickyG2.a, State.RETRACTED, () -> {
                     new SequentialCommandGroup(

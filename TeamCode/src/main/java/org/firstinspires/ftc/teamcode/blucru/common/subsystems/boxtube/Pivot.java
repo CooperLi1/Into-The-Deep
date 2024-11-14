@@ -63,14 +63,14 @@ public class Pivot implements BluSubsystem, Subsystem {
             case PID:
                 break;
             case RETRACTING:
-                if(Math.abs(pivotMotor.getAngle()) < 0.12 && Math.abs(pivotMotor.getAngleVel()) < 0.3) {
+                if(Math.abs(pivotMotor.getAngle()) < 0.10 && Math.abs(pivotMotor.getAngleVel()) < 0.1) {
                     state = State.RESETTING;
                     resetTimer.reset();
                 }
                 break;
             case RESETTING:
                 if(resetTimer.seconds() > 0.3 && getAngle() < 0.12) {
-                    pivotMotor.resetEncoder();
+                    pivotMotor.setCurrentPosition(0);
                     pidTo(0.0);
                 }
                 break;

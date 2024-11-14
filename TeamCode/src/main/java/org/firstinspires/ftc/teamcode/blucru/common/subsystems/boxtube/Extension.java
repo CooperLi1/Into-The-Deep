@@ -30,6 +30,7 @@ public class Extension implements BluSubsystem, Subsystem {
     ExtensionMotor extensionMotor;
     PIDController pidController;
     MotionProfile profile;
+    int retractionCount;
 
     PivotMotor pivot; // reference to pivot motor for feedforward
     double manualPower = 0;
@@ -45,6 +46,8 @@ public class Extension implements BluSubsystem, Subsystem {
         resetTimer = new ElapsedTime();
 
         pivot = null;
+
+        retractionCount = 0;
     }
 
     public void init() {

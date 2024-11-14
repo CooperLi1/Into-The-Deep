@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.opmode.BluLinearOpMode;
 
-@TeleOp(name = "PID Path test", group = "2")
+@TeleOp(name = "PID Path test", group = "test")
 public class PIDPathTest extends BluLinearOpMode {
     private enum State {
         RESETTING,
@@ -39,7 +39,7 @@ public class PIDPathTest extends BluLinearOpMode {
                     dt.resetHeading(Globals.startPose.getHeading());
                     pidPath.start();
                     pidStartTime = System.currentTimeMillis();
-                    
+
 //                    cvMaster.detectTag();
                 })
                 .loop(() -> {

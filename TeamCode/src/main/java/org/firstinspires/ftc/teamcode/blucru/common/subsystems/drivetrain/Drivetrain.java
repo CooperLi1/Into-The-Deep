@@ -212,7 +212,7 @@ public class Drivetrain extends SampleMecanumDrive implements BluSubsystem, Subs
     }
 
     public void driveToPosition(Pose2d targetPosition) {
-        drivePID.setTargetPosition(targetPosition.vec());
+        drivePID.setTargetPose(targetPosition.vec());
         Vector2d rawDriveVector = drivePID.calculate(getPoseEstimate().vec());
 
         driveToHeadingClip(rawDriveVector.getX(), rawDriveVector.getY(), targetPosition.getHeading());
@@ -291,6 +291,7 @@ public class Drivetrain extends SampleMecanumDrive implements BluSubsystem, Subs
     }
 
     public void resetHeading(double heading) {
+        setPoseEstimate(new Pose2d(getPoseEstimate().vec(), heading));
         setExternalHeading(heading);
         Log.i("Drivetrain", "Reset heading to " + heading);
     }

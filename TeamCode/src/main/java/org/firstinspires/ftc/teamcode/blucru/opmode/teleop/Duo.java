@@ -20,10 +20,11 @@ import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.clam
 import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.clamp.ClampReleaseCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.wheel.WheelIntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.wheel.WheelStopCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.wrist.WristUprightBackwardCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.wrist.WristUprightForwardCommand;
 import org.firstinspires.ftc.teamcode.blucru.opmode.BluLinearOpMode;
 
-@TeleOp(name = "Main TeleOp", group = "test")
+@TeleOp(name = "Main TeleOp", group = "1")
 public class Duo extends BluLinearOpMode {
     enum State {
         RETRACTED,
@@ -57,14 +58,14 @@ public class Duo extends BluLinearOpMode {
                     extension.setManualIntakingPower(-gamepad2.right_stick_y);
                     new ArmPreIntakeCommand().schedule();
                 })
-                .transition(() -> stickyG2.b, State.SCORING_BASKET, () -> {
+                .transition(() -> stickyG2.b && !gamepad2.dpad_left, State.SCORING_BASKET, () -> {
                     new BoxtubeExtendCommand(1.6, 13).schedule();
-                    new WristUprightForwardCommand().schedule();
+                    new WristUprightBackwardCommand().schedule();
                     new ArmGlobalAngleCommand(3.4).schedule();
                 })
                 .transition(() -> stickyG2.y, State.SCORING_BASKET, () -> {
                     new BoxtubeExtendCommand(1.6, 22).schedule();
-                    new WristUprightForwardCommand().schedule();
+                    new WristUprightBackwardCommand().schedule();
                     new ArmGlobalAngleCommand(2.2).schedule();
                 })
                 .transition(() -> stickyG2.b && gamepad2.dpad_left, State.SCORING_BASKET, () -> {
