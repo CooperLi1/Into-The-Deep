@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -17,12 +19,12 @@ public class DriveBase implements BluSubsystem {
     BluMotor[] motors;
 
     public DriveBase() {
-        localizer = new FusedLocalizer(new PinpointLocalizer());
+        localizer = new FusedLocalizer();
 
-        fl = new BluMotor("fl");
-        fr = new BluMotor("fr");
-        bl = new BluMotor("bl");
-        br = new BluMotor("br");
+        fl = new BluMotor("fl", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE);
+        fr = new BluMotor("fr", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE);
+        bl = new BluMotor("bl", DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE);
+        br = new BluMotor("br", DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE);
 
         motors = new BluMotor[] {fl, fr, bl, br};
     }
@@ -36,6 +38,8 @@ public class DriveBase implements BluSubsystem {
 
     @Override
     public void read() {
+        localizer.update();
+
         for (BluMotor motor : motors) {
             motor.read();
         }
@@ -55,8 +59,33 @@ public class DriveBase implements BluSubsystem {
         }
     }
 
+    public void driveFieldCentric(Pose2d fieldDrivePose) {
+        Pose2d robotDrivePose = new Pose2d(fieldDrivePose.vec().rotated(-localizer.getHeading()), fieldDrivePose.getHeading());
+        drive(robotDrivePose);
+    }
+
+    public Pose2d getPoseEstimate() {
+        return localizer.getPoseEstimate();
+    }
+
+    public void setPoseEstimate(Pose2d pose) {
+        localizer.setPoseEstimate(pose);
+    }
+
+    public void setHeading(double heading) {
+        localizer.setHeading(heading);
+    }
+
+    public double getHeading() {
+        return localizer.getHeading();
+    }
+
+    public Pose2d getPoseVelocity() {
+        return localizer.getPoseVelocity();
+    }
+
     @Override
     public void telemetry(Telemetry telemetry) {
-
+        localizer.telemetry();
     }
 }

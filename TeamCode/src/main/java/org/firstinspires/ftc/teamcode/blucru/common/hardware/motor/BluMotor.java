@@ -19,6 +19,10 @@ public class BluMotor extends DcMotorImpl implements BluHardwareDevice {
         this(name, Direction.FORWARD, ZeroPowerBehavior.FLOAT);
     }
 
+    public BluMotor(String name, ZeroPowerBehavior zpb) {
+        this(name, Direction.FORWARD, zpb);
+    }
+
     public BluMotor(String name, Direction direction, ZeroPowerBehavior zpb) {
         this(Globals.hwMap.get(DcMotor.class, name), name, direction, zpb);
     }

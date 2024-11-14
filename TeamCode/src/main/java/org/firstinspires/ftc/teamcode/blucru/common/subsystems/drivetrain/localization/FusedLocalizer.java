@@ -10,24 +10,25 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.vision.AprilTagPoseGetter;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.ArrayList;
 
 // this class combines odometry, IMU, and AprilTags with weighted updates
-public class FusedLocalizer {
+public class FusedLocalizer extends PinpointLocalizer{
     public static double TAG_UPDATE_DELAY = 100; // ms between tag updates
-    Localizer deadWheels;
     PoseHistory poseHistory;
     long lastFrameTime;
     double lastTagUpdateMillis;
 
-    public FusedLocalizer(Localizer localizer) {
-        deadWheels = localizer;
+    public FusedLocalizer() {
+        super();
         poseHistory = new PoseHistory();
 
         lastFrameTime = System.nanoTime();
@@ -36,10 +37,10 @@ public class FusedLocalizer {
 
     public void update() {
         // make a copy of the current pose, so that the pose history doesn't get updated with the same object
-        deadWheels.update();
-        Pose2d currentPose = deadWheels.getPoseEstimate();
+        super.update();
+        Pose2d currentPose = getPoseEstimate();
         //Log.v("Marker Entry", "Pos" + currentPose);
-        poseHistory.add(currentPose, deadWheels.getPoseVelocity());
+        poseHistory.add(currentPose, getPoseVelocity());
 
     }
 
@@ -83,7 +84,7 @@ public class FusedLocalizer {
         }
 
         // calculate change from old odo pose to current pose
-        Pose2d currentPose = deadWheels.getPoseEstimate();
+        Pose2d currentPose = getPoseEstimate();
 
         Pose2d odoPoseError = tagPose.minus(poseAtFrame);
         Pose2d weightedCorrection = odoPoseError.times(weight);
@@ -98,8 +99,8 @@ public class FusedLocalizer {
         Log.i("FusedLocalizer", "Updated pose to: " + newPose);
 
         // set pose estimate to tag pose + delta
-        deadWheels.setPoseEstimate(newPose);
-        deadWheels.update();
+        setPoseEstimate(newPose);
+        super.update();
         lastTagUpdateMillis = System.currentTimeMillis();
         // add tag - odo to pose history
         poseHistory.offset(weightedCorrection);
@@ -116,5 +117,11 @@ public class FusedLocalizer {
         // this function determines the weight of the update based on the velocity of the robot
         // put it into desmos to visualize
         return Range.clip(-0.75*Math.atan(.07 * totalVel-5), 0, 1);
+    }
+
+    public void telemetry() {
+        Telemetry tele = Globals.tele;
+        tele.addData("FusedLocalizer", "Pose: " + getPoseEstimate());
+        tele.addData("FusedLocalizer", "Velocity: " + getPoseVelocity());
     }
 }
