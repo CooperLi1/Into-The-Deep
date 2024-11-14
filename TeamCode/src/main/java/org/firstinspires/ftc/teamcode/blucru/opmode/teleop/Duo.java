@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 
+import org.firstinspires.ftc.teamcode.blucru.common.commandbase.BackHighBasketCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commandbase.BackLowBasketCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commandbase.FrontLowBasketCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commandbase.boxtube.BoxtubeExtendCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commandbase.boxtube.BoxtubeRetractCommand;
@@ -59,14 +61,10 @@ public class Duo extends BluLinearOpMode {
                     new ArmPreIntakeCommand().schedule();
                 })
                 .transition(() -> stickyG2.b && !gamepad2.dpad_left, State.SCORING_BASKET, () -> {
-                    new BoxtubeExtendCommand(1.6, 13).schedule();
-                    new WristUprightBackwardCommand().schedule();
-                    new ArmGlobalAngleCommand(3.4).schedule();
+                    new BackLowBasketCommand().schedule();
                 })
-                .transition(() -> stickyG2.y, State.SCORING_BASKET, () -> {
-                    new BoxtubeExtendCommand(1.6, 22).schedule();
-                    new WristUprightBackwardCommand().schedule();
-                    new ArmGlobalAngleCommand(2.2).schedule();
+                .transition(() -> stickyG2.y && !gamepad2.dpad_left, State.SCORING_BASKET, () -> {
+                    new BackHighBasketCommand().schedule();
                 })
                 .transition(() -> stickyG2.b && gamepad2.dpad_left, State.SCORING_BASKET, () -> {
                     new FrontLowBasketCommand().schedule();

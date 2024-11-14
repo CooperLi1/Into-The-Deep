@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.MotionProfile;
 public class Extension implements BluSubsystem, Subsystem {
     public static double
             kP = 0.4, kI = 0.0, kD = 0.02, kFAngle = 0.2, tolerance = 0.0,
-            MIN_INCHES = 0.0, MAX_INCHES = 22,
+            MIN_INCHES = 0.0, MAX_INCHES = 23,
             MAX_EXTEND_POWER = 1.0, MAX_RETRACT_POWER = -1.0;
 
     enum State {

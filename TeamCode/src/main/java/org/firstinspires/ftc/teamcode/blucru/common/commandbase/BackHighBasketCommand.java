@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.wris
 public class BackHighBasketCommand extends SequentialCommandGroup {
     public BackHighBasketCommand() {
         super(
-                new BoxtubeExtendCommand(Math.PI/2, 22),
+                new BoxtubeExtendCommand(Math.PI/2, 23),
                 new WristUprightBackwardCommand(),
                 new ArmGlobalAngleCommand(2.2)
         );
