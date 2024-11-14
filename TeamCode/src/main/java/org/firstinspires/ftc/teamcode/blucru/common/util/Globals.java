@@ -2,11 +2,15 @@ package org.firstinspires.ftc.teamcode.blucru.common.util;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.roadrunner.util.DashboardUtil;
 
 public class Globals {
     // default pose for the robot, will be changed at the end of auto
@@ -54,5 +58,14 @@ public class Globals {
 
     public static void autoRunningTelemetry(Telemetry telemetry) {
         telemetry.addData("Runtime", Globals.runtime.seconds());
+    }
+
+    public static void drawPose(Pose2d pose) {
+        TelemetryPacket packet = new TelemetryPacket();
+        Canvas fieldOverlay = packet.fieldOverlay()
+                .setStroke("#1d38cf");
+        DashboardUtil.drawRobot(fieldOverlay, pose);
+
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 }

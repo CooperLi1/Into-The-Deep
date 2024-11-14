@@ -10,6 +10,7 @@ public class DriveKinematics {
     public static double
         AXIAL_DECEL = 0.5, LATERAL_DECEL = 0.5, HEADING_DECEL = 8,
         LATERAL_MULTIPLIER = 1.8,
+        STRAFE_kStatic = 0.05, FORWARD_kStatic = 0.02, // feedforward constants for static friction
         MAX_ACCEL_DRIVE_DELTA = 0.5, MAX_DECEL_DRIVE_DELTA = 0.5;
 
     public static double getHeadingTowardsPoint(Pose2d currentPose, Pose2d targetPose) {
@@ -83,6 +84,20 @@ public class DriveKinematics {
 //        return driveVector; // return the new drive vector
 //    }
 
+    public static Pose2d processStaticFriction(Pose2d drivePose) {
+        Vector2d driveVector = drivePose.vec();
+
+        if(driveVector.norm() != 0) {
+            double angle = driveVector.angle();
+            double staticMinMagnitude =
+                    STRAFE_kStatic * FORWARD_kStatic
+                            /
+                            Math.hypot(STRAFE_kStatic * Math.cos(angle), FORWARD_kStatic * Math.sin(angle));
+            double newDriveMagnitude = staticMinMagnitude + (1-staticMinMagnitude) * driveVector.norm();
+            return new Pose2d(driveVector.div(driveVector.norm()).times(newDriveMagnitude), drivePose.getHeading());
+        } else return drivePose;
+    }
+
     public static double[] getDrivePowers(Pose2d drivePose) {
         double[] powers = new double[4];
 
@@ -90,6 +105,21 @@ public class DriveKinematics {
         powers[1] = drivePose.getX() + LATERAL_MULTIPLIER * drivePose.getY() + drivePose.getHeading();
         powers[2] = drivePose.getX() + LATERAL_MULTIPLIER * drivePose.getY() - drivePose.getHeading();
         powers[3] = drivePose.getX() - LATERAL_MULTIPLIER * drivePose.getY() + drivePose.getHeading();
+
+        // scale down
+
+        double max = Math.abs(powers[0]);
+        for(int i = 1; i < 4; i++) {
+            if(Math.abs(powers[i]) > max) {
+                max = Math.abs(powers[i]);
+            }
+        }
+
+        if(max > 1) {
+            for(int i = 0; i < 4; i++) {
+                powers[i] = powers[i]/max;
+            }
+        }
 
         return powers;
     }

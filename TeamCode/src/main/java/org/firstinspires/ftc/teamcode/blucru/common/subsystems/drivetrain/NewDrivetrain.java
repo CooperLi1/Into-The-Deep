@@ -34,12 +34,22 @@ public class NewDrivetrain extends DriveBase implements Subsystem {
         super.write();
     }
 
-    public void setTargetPose(Pose2d targetPose) {
+    public void pidTo(Pose2d targetPose) {
+        state = State.PID;
         pid.setTargetPose(targetPose);
+    }
+
+    public void updatePID() {
+        pid.updatePID();
+    }
+
+    public void idle() {
+        state = State.IDLE;
     }
 
     @Override
     public void telemetry(Telemetry telemetry) {
         telemetry.addData("Drivetrain State", state);
+        super.telemetry(telemetry);
     }
 }

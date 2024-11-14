@@ -9,9 +9,9 @@ import com.qualcomm.robotcore.util.Range;
 @Config
 public class DrivePID {
     public static double
-            kPX = 0.18, kIX = 0, kDX = 0.04,
-            kPY = 0.18, kIY = 0, kDY = 0.04,
-            kPHeading = 1.9, kIHeading = 0, kDHeading = 0.06;
+            kPX = 0.18, kIX = 0, kDX = 0.025,
+            kPY = 0.18, kIY = 0, kDY = 0.025,
+            kPHeading = 1.7, kIHeading = 0, kDHeading = 0.1;
 
     PIDController xController, yController, headingController;
 
@@ -28,9 +28,9 @@ public class DrivePID {
     }
 
     public Pose2d calculate(Pose2d currentPose) {
-        double xPower = xController.calculate(currentPose.getX());
-        double yPower = yController.calculate(currentPose.getY());
-        double headingPower = headingController.calculate(currentPose.getHeading());
+        double xPower = Range.clip(xController.calculate(currentPose.getX()), -1, 1);
+        double yPower = Range.clip(yController.calculate(currentPose.getY()), -1, 1);
+        double headingPower = getHeadingPID(currentPose.getHeading());
         return new Pose2d(xPower, yPower, headingPower);
     }
 

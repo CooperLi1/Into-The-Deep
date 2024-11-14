@@ -3,14 +3,13 @@ package org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotor;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.control.DriveKinematics;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.localization.FusedLocalizer;
-import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.localization.PinpointLocalizer;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 public class DriveBase implements BluSubsystem {
     FusedLocalizer localizer;
@@ -82,6 +81,10 @@ public class DriveBase implements BluSubsystem {
 
     public Pose2d getPoseVelocity() {
         return localizer.getPoseVelocity();
+    }
+
+    public void drawPose() {
+        Globals.drawPose(getPoseEstimate());
     }
 
     @Override

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.opmode.test;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.blucru.opmode.BluLinearOpMode;
@@ -10,7 +9,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmode.BluLinearOpMode;
 public class DriveBaseTest extends BluLinearOpMode {
     @Override
     public void initialize() {
-        addDriveBase();
+        addNewDrivetrain();
     }
 
     @Override
@@ -23,10 +22,10 @@ public class DriveBaseTest extends BluLinearOpMode {
         Pose2d drivePose = new Pose2d(x, y, rot);
 
         if(gamepad1.right_stick_button) {
-            driveBase.setHeading(Math.PI/2);
+            newDt.setHeading(Math.PI/2);
         }
 
 //        Pose2d drivePose = new Pose2d(new Vector2d(x,y).rotated(-Math.PI/2), rot);
-        driveBase.driveFieldCentric(drivePose);
+        newDt.driveFieldCentric(drivePose);
     }
 }
