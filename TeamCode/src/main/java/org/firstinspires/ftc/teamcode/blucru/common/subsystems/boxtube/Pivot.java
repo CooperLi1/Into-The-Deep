@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.LimitSwitch;
 import org.firstinspires.ftc.teamcode.blucru.common.subsystems.BluSubsystem;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.MotionProfile;
 import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 
@@ -32,7 +33,7 @@ public class Pivot implements BluSubsystem, Subsystem {
     MotionProfile profile;
     PivotMotor pivotMotor;
     LimitSwitch resetLimitSwitch;
-    ElapsedTime resetTimer;
+    double retractTime, resetTime;
 
     ExtensionMotor extension; // reference to extension motor for feedforward
 
@@ -40,7 +41,6 @@ public class Pivot implements BluSubsystem, Subsystem {
         pivotMotor = new PivotMotor();
         extension = null;
 
-        resetTimer = new ElapsedTime();
         profile = new MotionProfile(0,0,MAX_VELO, MAX_ACCEL);
         pidController = new PDController(kP, kI, kD);
         pidController.setTolerance(tolerance);
@@ -63,13 +63,13 @@ public class Pivot implements BluSubsystem, Subsystem {
             case PID:
                 break;
             case RETRACTING:
-                if(Math.abs(pivotMotor.getAngle()) < 0.10 && Math.abs(pivotMotor.getAngleVel()) < 0.1) {
+                if(pivotMotor.getAngle() < 0.10 && Math.abs(pivotMotor.getAngleVel()) < 0.1 && Globals.timeSince(retractTime) > 800) {
                     state = State.RESETTING;
-                    resetTimer.reset();
+                    resetTime = Globals.time();
                 }
                 break;
             case RESETTING:
-                if(resetTimer.seconds() > 0.3 && getAngle() < 0.12) {
+                if(Globals.timeSince(resetTime) > 300 && getAngle() < 0.12) {
                     pivotMotor.setCurrentPosition(0);
                     pidTo(0.0);
                 }
@@ -105,6 +105,7 @@ public class Pivot implements BluSubsystem, Subsystem {
 
     public void retract() {
         pidTo(0.05);
+        retractTime = Globals.time();
         state = State.RETRACTING;
     }
 

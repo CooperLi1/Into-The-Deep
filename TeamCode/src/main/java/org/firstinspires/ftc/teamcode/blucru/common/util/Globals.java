@@ -55,4 +55,12 @@ public class Globals {
     public static void autoRunningTelemetry(Telemetry telemetry) {
         telemetry.addData("Runtime", Globals.runtime.seconds());
     }
+
+    public static double time() {
+        return runtime.milliseconds();
+    }
+
+    public static double timeSince(double time) {
+        return runtime.milliseconds() - time;
+    }
 }
