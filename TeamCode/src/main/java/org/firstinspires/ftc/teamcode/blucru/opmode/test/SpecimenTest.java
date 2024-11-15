@@ -91,7 +91,7 @@ public class SpecimenTest extends BluLinearOpMode {
                             new ClampGrabCommand(),
                             new WheelStopCommand(),
                             new ArmGlobalAngleCommand(1),
-                            new BoxtubeExtendCommand(0.45, 5.6),
+                            new BoxtubeExtendCommand(0.48, 5.6),
                             new WaitCommand(300),
                             new EndEffectorRetractCommand(),
                             new BoxtubeRetractCommand()
@@ -165,7 +165,7 @@ public class SpecimenTest extends BluLinearOpMode {
 
                 .state(State.DUNKING_SPECIMEN)
                 .transition(() -> !gamepad2.left_bumper, State.ABOVE_SPECIMEN, () -> {
-                    new BoxtubeExtendCommand(1.4, 5).schedule();
+                    new BoxtubeExtendCommand(1.4, 9).schedule();
                 })
                 .transition(() -> stickyG2.a, State.RETRACTED, () -> {
                     new SequentialCommandGroup(
