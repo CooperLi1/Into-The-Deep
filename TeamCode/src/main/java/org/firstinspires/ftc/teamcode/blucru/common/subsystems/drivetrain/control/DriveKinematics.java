@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.util.Angle;
+import com.qualcomm.robotcore.util.Range;
 
 @Config
 public class DriveKinematics {
@@ -99,6 +100,11 @@ public class DriveKinematics {
     }
 
     public static double[] getDrivePowers(Pose2d drivePose) {
+        // clip to power 1
+        drivePose = new Pose2d(Range.clip(drivePose.getX(), -1, 1),
+                Range.clip(drivePose.getY(), -1, 1),
+                Range.clip(drivePose.getHeading(), -1, 1));
+
         double[] powers = new double[4];
 
         powers[0] = drivePose.getX() - LATERAL_MULTIPLIER * drivePose.getY() - drivePose.getHeading();
