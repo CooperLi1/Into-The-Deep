@@ -74,7 +74,7 @@ public class Extension implements BluSubsystem, Subsystem {
                 }
                 break;
             case RESETTING:
-                if(resetTimer.seconds() > 0.3 && getDistance() < 1.0) {
+                if(resetTimer.seconds() > 0.3 && getDistance() < 0.3) {
                     extensionMotor.resetEncoder();
                     pidTo(0);
                 }
