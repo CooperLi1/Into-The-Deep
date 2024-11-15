@@ -36,7 +36,6 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public StickyGamepad stickyG1;
     public StickyGamepad stickyG2;
 
-    ElapsedTime runtime;
     double lastTime;
     double loopTimeSum;
     int loopTimeCount;
@@ -71,8 +70,6 @@ public abstract class BluLinearOpMode extends LinearOpMode {
         waitForStart();
         onStart();
         Globals.runtime.reset();
-        runtime = new ElapsedTime(); // start timer
-        runtime.reset();
 
         while (!isStopRequested() && opModeIsActive()) {
             stickyG1.update();
@@ -89,8 +86,8 @@ public abstract class BluLinearOpMode extends LinearOpMode {
             robot.write();
 
             // calculate average loop time
-            loopTimeSum += runtime.milliseconds() - lastTime;
-            lastTime = runtime.milliseconds();
+            loopTimeSum += Globals.runtime.milliseconds() - lastTime;
+            lastTime = Globals.runtime.milliseconds();
             loopTimeCount++;
 
             telemetry();
@@ -129,18 +126,6 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public void enableFTCDashboard() {
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
         Globals.tele = telemetry;
-    }
-
-    public double currentSecs() {return runtime.seconds();}
-
-    public double currentTime() {return runtime.milliseconds();}
-
-    public double secsSince(double timeSecs) {
-        return runtime.seconds() - timeSecs;
-    }
-
-    public double timeSince(double timeMillis) {
-        return runtime.milliseconds() - timeMillis;
     }
 
     private void resetLoopTime() {

@@ -52,6 +52,8 @@ public class DriveBase implements BluSubsystem {
     }
 
     public void drive(Pose2d pose) {
+        pose = DriveKinematics.processStaticFriction(pose);
+
         double[] powers = DriveKinematics.getDrivePowers(pose);
         for (int i = 0; i < motors.length; i++) {
             motors[i].setPower(powers[i]);
