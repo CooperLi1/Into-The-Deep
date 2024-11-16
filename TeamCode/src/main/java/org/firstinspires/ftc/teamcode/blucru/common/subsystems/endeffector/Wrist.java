@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsystems.BluSubsystem;
 
 @Config
 public class Wrist extends BluServo implements BluSubsystem, Subsystem {
-    public static double HORIZONTAL_POS = 0.43;
+    public static double HORIZONTAL_POS = 0.5995;
 
     public Wrist() {
         super("wrist");
@@ -31,6 +31,10 @@ public class Wrist extends BluServo implements BluSubsystem, Subsystem {
 
     public void uprightBackward() {
         setPosition(HORIZONTAL_POS + 0.28);
+    }
+
+    public void opposite() {
+        setPosition(HORIZONTAL_POS - 0.56);
     }
 
     @Override

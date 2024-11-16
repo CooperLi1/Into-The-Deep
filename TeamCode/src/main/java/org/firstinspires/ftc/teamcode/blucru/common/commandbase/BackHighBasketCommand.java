@@ -13,7 +13,7 @@ public class BackHighBasketCommand extends SequentialCommandGroup {
         super(
                 new BoxtubeExtendCommand(Math.PI/2, 24),
                 new WristUprightBackwardCommand(),
-                new ArmGlobalAngleCommand(3.4)
+                new ArmGlobalAngleCommand(2.6)
         );
     }
 }

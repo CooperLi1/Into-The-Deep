@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.whee
 import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.wheel.WheelReverseCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.wheel.WheelStopCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.wrist.WristHorizontalCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.wrist.WristOppositeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commandbase.endeffector.wrist.WristUprightForwardCommand;
 import org.firstinspires.ftc.teamcode.blucru.opmode.BluLinearOpMode;
 
@@ -65,8 +66,8 @@ public class SpecimenTest extends BluLinearOpMode {
                     new ArmGlobalAngleCommand(2.5).schedule();
                 })
                 .transition(() -> stickyG2.x, State.EXTENDING_TO_WALL, () -> {
-                    new BoxtubeExtendCommand(0.27, 5.3).schedule();
-                    new WristHorizontalCommand().schedule();
+                    new BoxtubeExtendCommand(0.3, 5.3).schedule();
+                    new WristOppositeCommand().schedule();
                     new ArmGlobalAngleCommand(0).schedule();
                 })
 
@@ -91,7 +92,7 @@ public class SpecimenTest extends BluLinearOpMode {
                             new ClampGrabCommand(),
                             new WheelStopCommand(),
                             new ArmGlobalAngleCommand(1),
-                            new BoxtubeExtendCommand(0.48, 5.6),
+                            new BoxtubeExtendCommand(0.45, 5.6),
                             new WaitCommand(300),
                             new EndEffectorRetractCommand(),
                             new BoxtubeRetractCommand()
@@ -165,7 +166,7 @@ public class SpecimenTest extends BluLinearOpMode {
 
                 .state(State.DUNKING_SPECIMEN)
                 .transition(() -> !gamepad2.left_bumper, State.ABOVE_SPECIMEN, () -> {
-                    new BoxtubeExtendCommand(1.4, 9).schedule();
+                    new BoxtubeExtendCommand(1.4, 5).schedule();
                 })
                 .transition(() -> stickyG2.a, State.RETRACTED, () -> {
                     new SequentialCommandGroup(
